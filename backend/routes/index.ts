@@ -7,6 +7,8 @@ router.get("/", (req: Request, res: Response): void => {
     res.send("This is the index route")
 });
 
+router.use('/api', api);
+
 // 404 route
 router.all('*', (req: Request, res: Response): void => {
     const errorMessage = {
@@ -20,7 +22,5 @@ router.all('*', (req: Request, res: Response): void => {
 
     res.status(404).json(errorMessage)
 })
-
-router.use('/api', api);
 
 export default router;

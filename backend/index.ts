@@ -1,4 +1,4 @@
-import express, {Application} from 'express';
+import express, { Application } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import routes from './routes';
@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', routes);
 
 const PORT = process.env.PORT || 8000;
-  
-app.listen(PORT, ():void => {
+
+app.listen(PORT, (): void => {
     console.log(`Server Running here 👉 https://localhost:${PORT}`);
 });
