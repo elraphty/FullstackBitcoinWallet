@@ -1,12 +1,12 @@
-import express, {Request,Response,Application} from 'express';
+import express, {Application} from 'express';
+import routes from './routes';
 
 const app: Application = express();
 
-const PORT = process.env.PORT || 8000;
+// Router files
+app.use('/', routes);
 
-app.get("/", (req:Request, res:Response):void => {
-    res.send("Hello Typescript with Node.js!")
-});
+const PORT = process.env.PORT || 8000;
   
 app.listen(PORT, ():void => {
     console.log(`Server Running here 👉 https://localhost:${PORT}`);
