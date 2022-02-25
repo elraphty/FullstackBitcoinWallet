@@ -4,6 +4,9 @@ import BIP32Factory, { BIP32Interface } from 'bip32';
 import * as ecc from 'tiny-secp256k1';
 import { networks, payments } from 'bitcoinjs-lib';
 import { responseSuccess } from "../helpers";
+import { getUtxosFromAddress } from "../helpers/blockstream-api";
+import { Address, DecoratedUtxo } from "../interfaces/blockstream";
+import { deriveChildPublicKey, getAddressFromChildPubkey } from "../helpers/bitcoinlib";
 
 const bip32 = BIP32Factory(ecc);
 
@@ -27,10 +30,9 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
 
         // networks.bitcoin.bip32.public
 
-        const seed = await mnemonicToSeed(mnemonic); 
+        const seed = await mnemonicToSeed(mnemonic);
         const node = bip32.fromSeed(seed, networks.testnet);
         const xprv = node.toBase58();
-
 
         const xpub = node.derivePath(derivationPath).neutered().toBase58();
 
@@ -48,23 +50,86 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
 // Controller for generating master private key
 export const generateChildPubKey = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const xpriv: string  = req.body.publickey;
+        const xpub: string = req.body.publickey;
 
-        const node = bip32.fromBase58(xpriv, networks.testnet);
+        const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0");
 
         const child = node.neutered().toBase58();
 
         const { address } = payments.p2wpkh({
-            pubkey: bip32.fromBase58(xpriv,  networks.testnet).derive(0).derive(1).publicKey,
+            pubkey: node.publicKey,
         });
 
         const data = {
             child,
-            address
+            address,
         };
-      
+
         responseSuccess(res, 200, 'Successfully generated address', data);
     } catch (err) {
+        next(err);
+    }
+};
+
+export const getUtxos = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const xpub: string = req.body.publickey;
+
+        const currentAddressBatch: Address[] = [];
+
+        const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0");
+
+        for (let i = 0; i < 10; i++) {
+            const derivationPath = `0/${i}`;
+            const currentChildPubkey = bip32.fromBase58(xpub, networks.testnet).derivePath(derivationPath);
+            const currentAddress = getAddressFromChildPubkey(currentChildPubkey);
+            currentAddressBatch.push({
+                ...currentAddress,
+                derivationPath,
+                masterFingerprint: node.fingerprint,
+            });
+        }
+
+
+        const currentChangeAddressBatch: Address[] = [];
+        for (let i = 0; i < 10; i++) {
+            const derivationPath = `0/0/${i}`;
+            const currentChildPubkey = bip32.fromBase58(xpub, networks.testnet).derivePath(derivationPath);
+            const currentAddress = getAddressFromChildPubkey(currentChildPubkey);
+            currentChangeAddressBatch.push({
+            ...currentAddress,
+            derivationPath,
+            masterFingerprint: node.fingerprint,
+            });
+        }
+
+        const data: Address[] = [...currentAddressBatch, ...currentChangeAddressBatch];
+
+
+        const deocratedUtxos: DecoratedUtxo[] = [];
+
+        for (let i = 0; i < data.length; i++) {
+          const _currentAddress: Address = data[i];
+          const utxos = await getUtxosFromAddress(_currentAddress);
+
+          for (let j = 0; j < utxos.length; j++) {
+            deocratedUtxos.push({
+              ...utxos[j],
+              address: _currentAddress,
+              bip32Derivation: [
+                {
+                  pubkey: _currentAddress.pubkey!,
+                  path: `m/44'/0'/0'/0/${_currentAddress.derivationPath}`,
+                  masterFingerprint: node.fingerprint,
+                },
+              ],
+            });
+          }
+        }
+
+        responseSuccess(res, 200, 'Successfully generated address', deocratedUtxos);
+    } catch (err) {
+        console.log('Errors ===', err);
         next(err);
     }
 };
