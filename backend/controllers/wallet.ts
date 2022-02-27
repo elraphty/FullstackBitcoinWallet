@@ -6,7 +6,7 @@ import { networks, payments } from 'bitcoinjs-lib';
 import { responseSuccess } from "../helpers";
 import { getTransactionsFromAddress, getUtxosFromAddress } from "../helpers/blockstream-api";
 import { Address, BlockstreamAPITransactionResponse, DecoratedUtxo } from "../interfaces/blockstream";
-import { deriveChildPublicKey, getAddressFromChildPubkey } from "../helpers/bitcoinlib";
+import { createTransasction, deriveChildPublicKey, getAddressFromChildPubkey } from "../helpers/bitcoinlib";
 import { serializeTxs } from "../helpers/transactions";
 
 const bip32 = BIP32Factory(ecc);
@@ -128,7 +128,7 @@ export const getUtxos = async (req: Request, res: Response, next: NextFunction):
           }
         }
 
-        responseSuccess(res, 200, 'Successfully generated address', deocratedUtxos);
+        responseSuccess(res, 200, 'Successfully listed utxos', deocratedUtxos);
     } catch (err) {
         next(err);
     }
@@ -184,8 +184,74 @@ export const getTransactions = async (req: Request, res: Response, next: NextFun
             currentChangeAddressBatch
         );
 
-        responseSuccess(res, 200, 'Successfully generated address', serializedTxs);
+        responseSuccess(res, 200, 'Successfully listed transactions', serializedTxs);
     } catch (err) {
+        next(err);
+    }
+};
+
+export const createTransactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const xpub: string = req.body.publickey;
+        const recipientAddress: string = req.body.recipientAddress;
+        const amount: number = req.body.amount;
+
+        const currentAddressBatch: Address[] = [];
+
+        const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0");
+
+        for (let i = 0; i < 10; i++) {
+            const derivationPath = `0/${i}`;
+            const currentChildPubkey = bip32.fromBase58(xpub, networks.testnet).derivePath(derivationPath);
+            const currentAddress = getAddressFromChildPubkey(currentChildPubkey);
+            currentAddressBatch.push({
+                ...currentAddress,
+                derivationPath,
+                masterFingerprint: node.fingerprint,
+            });
+        }
+
+        const currentChangeAddressBatch: Address[] = [];
+        for (let i = 0; i < 10; i++) {
+            const derivationPath = `0/0/${i}`;
+            const currentChildPubkey = bip32.fromBase58(xpub, networks.testnet).derivePath(derivationPath);
+            const currentAddress = getAddressFromChildPubkey(currentChildPubkey);
+            currentChangeAddressBatch.push({
+            ...currentAddress,
+            derivationPath,
+            masterFingerprint: node.fingerprint,
+            });
+        }
+
+        const addresses: Address[] = [...currentAddressBatch, ...currentChangeAddressBatch];
+
+
+        const deocratedUtxos: DecoratedUtxo[] = [];
+
+        for (let i = 0; i < addresses.length; i++) {
+          const _currentAddress: Address = addresses[i];
+          const utxos = await getUtxosFromAddress(_currentAddress);
+
+          for (let j = 0; j < utxos.length; j++) {
+            deocratedUtxos.push({
+              ...utxos[j],
+              address: _currentAddress,
+              bip32Derivation: [
+                {
+                  pubkey: _currentAddress.pubkey!,
+                  path: `m/44'/0'/0'/0/${_currentAddress.derivationPath}`,
+                  masterFingerprint: node.fingerprint,
+                },
+              ],
+            });
+          }
+        }
+
+        const transaction = await createTransasction(deocratedUtxos, recipientAddress, amount, currentChangeAddressBatch[0]);
+
+        responseSuccess(res, 200, 'Successfully created transaction', transaction);
+    } catch (err) {
+        console.log('Transaction Error ==', err);
         next(err);
     }
 };
