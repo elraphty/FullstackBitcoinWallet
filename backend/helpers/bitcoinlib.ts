@@ -6,6 +6,7 @@ import ECPairFactory from 'ecpair';
 import { DecoratedUtxo } from '../interfaces';
 import { Address } from '../interfaces/blockstream';
 import coinSelect from 'coinselect';
+import { getTransactionHex } from './blockstream-api';
 
 const ECPair = ECPairFactory(ecc);
 const bip32 = BIP32Factory(ecc);
@@ -58,7 +59,7 @@ export const deriveChildPublicKey = (
 };
 
 
-export const createTransasction = async (
+export const createTransaction = async (
   utxos: DecoratedUtxo[],
   recipientAddress: string,
   amountInSatoshis: number,
@@ -77,6 +78,8 @@ export const createTransasction = async (
     1
   );
 
+  // console.log('COINSELEC INPUTS ==', inputs);
+
   if (!inputs || !outputs) throw new Error("Unable to construct transaction");
   if (fee > amountInSatoshis) throw new Error("Fee is too high!");
 
@@ -84,18 +87,21 @@ export const createTransasction = async (
   psbt.setVersion(2); // These are defaults. This line is not needed.
   psbt.setLocktime(0); // These are defaults. This line is not needed.
 
-  inputs.forEach((input: any) => {
+  for(let input of inputs) {
+    const txHex = await getTransactionHex(input.txid);
+    // console.log('Transaction Hex ===', txHex);
     psbt.addInput({
       hash: input.txid,
       index: input.vout,
-      sequence: 0xfffffffd, // enables RBF
-      witnessUtxo: {
-        value: input.value,
-        script: input.address.output!,
-      },
+      // sequence: 0xfffffffd, // enables RBF
+      // witnessUtxo: {
+      //   value: input.value,
+      //   script: input.address.output!,
+      // },
+      nonWitnessUtxo: Buffer.from(txHex, 'hex'),
       bip32Derivation: input.bip32Derivation,
     });
-  });
+  };
 
   outputs.forEach((output: any) => {
     // coinselect doesnt apply address to change output, so add it here
@@ -114,13 +120,18 @@ export const createTransasction = async (
 
 export const signTransaction = async (
   psbt: Psbt,
-  mnemonic: string
+  mnemonic: string,
+  node: BIP32Interface
 ): Promise<Psbt> => {
   const seed = await mnemonicToSeed(mnemonic);
-  const root = bip32.fromSeed(seed, networks.bitcoin);
+  const root = bip32.fromSeed(seed, networks.testnet);
+  // const derivationPath = "m/84'/0'/0'";
+  // console.log('PUBKEY from sign ===', root.derivePath(derivationPath).neutered().toBase58());
 
-  psbt.signAllInputsHD(root);
-  psbt.validateSignaturesOfAllInputs(validator);
-  psbt.finalizeAllInputs();
+  const key = ECPair.fromPublicKey(node.publicKey)
+
+  await psbt.signInputHD(0, node);
+  await psbt.validateSignaturesOfAllInputs(validator);
+  await psbt.finalizeAllInputs();
   return psbt;
 };

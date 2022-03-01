@@ -27,6 +27,14 @@ export const getUtxosFromAddress = async (
   return data;
 };
 
+export const getTransactionHex = async(txid: string): Promise<string> => {
+  const { data } = await axios.get(
+    `${BASE_URL}/tx/${txid}/hex`
+  );
+
+  return data;
+};
+
 export const getFeeRates = async () => {
   throw new Error("Function not implemented yet");
 };
