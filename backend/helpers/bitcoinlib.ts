@@ -6,7 +6,7 @@ import ECPairFactory from 'ecpair';
 import { DecoratedUtxo } from '../interfaces';
 import { Address, SignedTransactionData } from '../interfaces/blockstream';
 import coinSelect from 'coinselect';
-import { getTransactionHex } from './blockstream-api';
+import { getTransactionHex, getUtxosFromAddress } from './blockstream-api';
 
 const ECPair = ECPairFactory(ecc);
 const bip32 = BIP32Factory(ecc);
@@ -53,7 +53,7 @@ export const deriveChildPublicKey = (
   xpub: string,
   derivationPath: string
 ): BIP32Interface => {
-  const node = bip32.fromBase58(xpub, networks.bitcoin);
+  const node = bip32.fromBase58(xpub, networks.testnet);
   const child = node.derivePath(derivationPath);
   return child;
 };
@@ -84,11 +84,11 @@ export const createTransaction = async (
   if (fee > amountInSatoshis) throw new Error("Fee is too high!");
 
   const psbt = new Psbt({ network: networks.testnet });
-  
+
   psbt.setVersion(2); // These are defaults. This line is not needed.
   psbt.setLocktime(0); // These are defaults. This line is not needed.
 
-  for(let input of inputs) {
+  for (let input of inputs) {
     const txHex = await getTransactionHex(input.txid);
 
     psbt.addInput({
@@ -117,6 +117,66 @@ export const createTransaction = async (
   });
 
   return psbt;
+};
+
+export const createAddressBatch = (xpub: string, root: BIP32Interface): Address[] => {
+  const addressBatch: Address[] = [];
+
+  for (let i = 0; i < 10; i++) {
+    const derivationPath = `0/${i}`;
+    const currentChildPubkey = deriveChildPublicKey(xpub, derivationPath);
+    const currentAddress = getAddressFromChildPubkey(currentChildPubkey);
+
+    addressBatch.push({
+      ...currentAddress,
+      derivationPath,
+      masterFingerprint: root.fingerprint,
+    });
+  }
+
+  return addressBatch;
+};
+
+export const changeAddressBatch = (xpub: string, root: BIP32Interface): Address[] => {
+  const addressBatch: Address[] = [];
+
+  for (let i = 0; i < 10; i++) {
+    const derivationPath = `1/${i}`;
+    const currentChildPubkey = deriveChildPublicKey(xpub, derivationPath);
+    const currentAddress = getAddressFromChildPubkey(currentChildPubkey);
+
+    addressBatch.push({
+      ...currentAddress,
+      derivationPath,
+      masterFingerprint: root.fingerprint,
+    });
+  }
+
+  return addressBatch;
+};
+
+export const createDecoratedUTXOs = async (addresses: Address[], root: BIP32Interface): Promise<DecoratedUtxo[]> => {
+  const deocratedUtxos: DecoratedUtxo[] = [];
+
+  for (let address of addresses) {
+    const utxos = await getUtxosFromAddress(address);
+
+    for (let utxo of utxos) {
+        deocratedUtxos.push({
+            ...utxo,
+            address: address,
+            bip32Derivation: [
+                {
+                    pubkey: address.pubkey!,
+                    path: `m/84'/0'/0'/${address.derivationPath}`,
+                    masterFingerprint: root.fingerprint,
+                },
+            ],
+        });
+    }
+}
+
+return deocratedUtxos;
 };
 
 export const signTransaction = async (

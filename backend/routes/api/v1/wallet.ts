@@ -1,5 +1,5 @@
 import express, {Router} from 'express';
-import {generateMnenomic, generateMasterKeys, generateChildPubKey, getUtxos, getTransactions, createTransactions, broadcastTransaction} from '../../../controllers/wallet';
+import {generateMnenomic, generateMasterKeys, generateAddress, getUtxos, getTransactions, createTransactions, broadcastTransaction} from '../../../controllers/wallet';
 
 const router: Router = express.Router();
 
@@ -7,7 +7,7 @@ router.get('/mnenomic', generateMnenomic);
 
 router.post('/privatekey', generateMasterKeys)
 
-router.post('/childpubkey', generateChildPubKey)
+router.post('/getaddress', generateAddress)
 
 router.post('/utxos', getUtxos)
 
