@@ -126,10 +126,9 @@ export const createTransactions = async (req: Request, res: Response, next: Next
         const xpub: string = req.body.publicKey;
         const recipientAddress: string = req.body.recipientAddress;
         const amount: number = req.body.amount;
-        const mnemonic: string = req.body.mnemonic;
+        const xprv: string = req.body.privateKey;
 
-        const seed = await mnemonicToSeed(mnemonic);
-        const root = bip32.fromSeed(seed, networks.testnet);
+        const root = bip32.fromBase58(xprv, networks.testnet);
 
         const currentAddressBatch: Address[] = createAddressBatch(xpub, root);
 
