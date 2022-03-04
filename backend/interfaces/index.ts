@@ -1,3 +1,4 @@
+import { ValidationError } from "express-validator";
 import { Address, BlockstreamAPITransactionResponse, BlockstreamAPIUtxoResponse, Vin, Vout } from "./blockstream";
 
 export interface DataResponse {
@@ -7,6 +8,11 @@ export interface DataResponse {
 
 export interface ErrorResponse {
     msg: string;
+}
+
+export interface ErrorValidationResponse {
+    msg: string;
+    errors: ValidationError[];
 }
 
 export interface DecoratedVin extends Vin {

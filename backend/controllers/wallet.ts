@@ -3,11 +3,12 @@ import { generateMnemonic, mnemonicToSeed } from 'bip39';
 import BIP32Factory, { BIP32Interface } from 'bip32';
 import * as ecc from 'tiny-secp256k1';
 import { networks, Psbt } from 'bitcoinjs-lib';
-import { responseSuccess } from "../helpers";
+import { responseSuccess, responseErrorValidation } from "../helpers";
 import { broadcastTx, getTransactionsFromAddress } from "../helpers/blockstream-api";
 import { Address, BlockstreamAPITransactionResponse, DecoratedUtxo, SignedTransactionData } from "../interfaces/blockstream";
 import { createTransaction, getAddressFromChildPubkey, signTransaction, createAddressBatch, changeAddressBatch, createDecoratedUTXOs } from "../helpers/bitcoinlib";
 import { serializeTxs } from "../helpers/transactions";
+import { validationResult } from 'express-validator';
 
 const bip32 = BIP32Factory(ecc);
 
@@ -25,8 +26,14 @@ export const generateMnenomic = (req: Request, res: Response, next: NextFunction
 };
 
 // Controller for generating master private, and public  key
-export const generateMasterKeys = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const generateMasterKeys = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return responseErrorValidation(res, 400, errors.array());
+        }
+
         const mnemonic: string = req.body.mnemonic;
         const seed = await mnemonicToSeed(mnemonic);
         const node = bip32.fromSeed(seed, networks.testnet);
@@ -39,7 +46,7 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
             xpub,
         };
 
-        responseSuccess(res, 200, 'Successfully generated master keys', data);
+        return responseSuccess(res, 200, 'Successfully generated master keys', data);
     } catch (err) {
         next(err);
     }
@@ -54,7 +61,7 @@ export const generateAddress = async (req: Request, res: Response, next: NextFun
 
         const child = node.neutered().toBase58();
 
-        const {address} = getAddressFromChildPubkey(node);
+        const { address } = getAddressFromChildPubkey(node);
 
         const data = {
             child,
