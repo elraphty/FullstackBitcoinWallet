@@ -12,3 +12,23 @@ export const generateKeys = [
     .escape()
     .withMessage('Enter your 24 characters long mnemonic words')
 ]
+
+export const generateAdd = [
+  body('publicKey')
+    .not().isEmpty()
+    .isString()
+    .ltrim()
+    .rtrim()
+    .escape()
+    .withMessage('Requires public key')
+]
+
+export const broadcastTx = [
+  body('txHex')
+    .not().isEmpty()
+    .isString()
+    .ltrim()
+    .rtrim()
+    .escape()
+    .withMessage('Requires transaction Hex')
+]

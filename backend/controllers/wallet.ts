@@ -53,8 +53,14 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
 };
 
 // Controller for generating master private key
-export const generateAddress = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const generateAddress = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return responseErrorValidation(res, 400, errors.array());
+        }
+    
         const xpub: string = req.body.publicKey;
 
         const node: BIP32Interface = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
@@ -68,7 +74,7 @@ export const generateAddress = async (req: Request, res: Response, next: NextFun
             address,
         };
 
-        responseSuccess(res, 200, 'Successfully generated address', data);
+        return responseSuccess(res, 200, 'Successfully generated address', data);
     } catch (err) {
         next(err);
     }
@@ -76,6 +82,12 @@ export const generateAddress = async (req: Request, res: Response, next: NextFun
 
 export const getUtxos = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return responseErrorValidation(res, 400, errors.array());
+        }
+
         const xpub: string = req.body.publicKey;
 
         const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
@@ -159,6 +171,12 @@ export const createTransactions = async (req: Request, res: Response, next: Next
 
 export const broadcastTransaction = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return responseErrorValidation(res, 400, errors.array());
+        }
+        
         const txHex: string = req.body.txHex;
 
         const data = await broadcastTx(txHex);
