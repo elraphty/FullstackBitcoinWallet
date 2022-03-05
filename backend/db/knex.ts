@@ -12,4 +12,4 @@ if (env === 'production') {
     KnexSetup = knex(development)
 }
 
-module.exports = KnexSetup
+export default KnexSetup

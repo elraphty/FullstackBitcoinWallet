@@ -18,5 +18,6 @@ export const createUser = [
     .rtrim()
     .whitelist(myWhitelist)
     .escape()
-    .withMessage('Email is required'),
+    .isLength({min: 6})
+    .withMessage('Password is required'),
 ]
