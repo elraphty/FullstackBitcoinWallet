@@ -3,7 +3,7 @@ const env = process.env.NODE_ENV || 'development'
 import {Knex, knex} from 'knex';
 import {development, test, production} from '../knexfile';
 
-let KnexSetup: Knex.Config;
+let KnexSetup: Knex;
 if (env === 'production') {
     KnexSetup = knex(production);
 } else if (env === 'test') {

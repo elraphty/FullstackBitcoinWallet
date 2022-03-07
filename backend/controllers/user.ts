@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import knex from '../db/knex';
 import { validationResult } from 'express-validator';
 import { responseSuccess, responseErrorValidation, responseError } from '../helpers';
-import { User } from '../interfaces/knex';
+import { User, UserLogin } from '../interfaces/knex';
 import { hashPassword, verifyPassword } from '../helpers/password';
 import { signUser } from '../helpers/jwt';
 
@@ -18,9 +18,9 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
         const email: string = req.body.email;
         const pass: string = req.body.password;
 
-        const count: User[] = await knex<User>('users').where({ email });
+        const user: User[] = await knex<User>('users').where({ email });
 
-        if (count.length > 0) {
+        if (user.length > 0) {
             return responseError(res, 404, 'User already exists');
         }
 
@@ -46,13 +46,10 @@ export const userLogin = async (req: Request, res: Response, next: NextFunction)
         const email: string = req.body.email;
         const pass: string = req.body.password;
 
-        const userCount = await knex<User>('users').count().where({ email }).first();
+        const users: UserLogin[] = await knex<UserLogin>('users').where({ email });
 
-        if (Number(userCount?.count) > 0) {
-            const user = await knex<User>('users')
-                .where({email})
-                .first()
-
+        if (users.length > 0) {
+            let user = users[0];
             if (!verifyPassword(pass, user.password)) {
                 return responseError(res, 404, 'Error with login')
             }

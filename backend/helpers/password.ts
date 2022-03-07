@@ -21,6 +21,6 @@ export const hashPassword = (password: string): string => {
  * @param {*} callback
  */
 
-export const verifyPassword = (password: string, hash: string): boolean => {
+export const verifyPassword = (password: string, hash: string | any): boolean => {
     return bcrypt.compareSync(password, hash);
 };
