@@ -1,5 +1,8 @@
+@import './_fonts';
+
 body {
     background: #000000;
+    font-family: ITC_AVANT;
 }
 
 label.form__label {
@@ -7,8 +10,14 @@ label.form__label {
     margin-bottom: 5px;
     font-size: 0.9rem;
     font-weight: bold;
+    font-family: ITC_AVANT_DEMI;
 }
 
 input {
     margin-bottom: 20px;
+    min-height: 40px;
+}
+
+button {
+    font-family: ITC_AVANT_DEMI;
 }

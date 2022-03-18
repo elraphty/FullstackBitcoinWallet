@@ -1,10 +1,9 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useMemo } from 'react'
-import Image from 'next/image'
 import styles from '../styles/login.module.css'
 
-const Login: NextPage = () => {
+const Signup: NextPage = () => {
   const inputClassName = useMemo(
     () =>
       "px-5 h-9 2xl:h-10 w-full flex items-center text-xs font-normal text-brand-text border border-solid border-[#F1F1F1] rounded-md 2xl:text-sm",
@@ -21,7 +20,7 @@ const Login: NextPage = () => {
 
       <main className={styles.main}>
         <div className={styles.wrap}>
-          <h2 className="form_heading">User Login</h2>
+          <h2 className="form_heading">User Signup</h2>
         </div>
         <div className={styles.wrap}>
           <section className="inputgroup">
@@ -57,7 +56,7 @@ const Login: NextPage = () => {
           <button
             onClick={() => {}}
             className="font-bold mt-4 bg-purple-500 text-white rounded p-2 w-full">
-            Login
+            Create account
           </button>
         </section>
       </main>
@@ -68,4 +67,4 @@ const Login: NextPage = () => {
   )
 }
 
-export default Login
+export default Signup;
