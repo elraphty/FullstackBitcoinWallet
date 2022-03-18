@@ -1,0 +1,90 @@
+.form {
+    @apply w-full;
+}
+
+.form.center {
+    @apply flex;
+    @apply flex-col;
+    @apply justify-center;
+}
+
+.form__content {
+    @apply flex;
+    @apply flex-col;
+    @apply flex-auto;
+    @apply p-4;
+}
+
+.form_heading {
+    color: #FFF;
+    align-self: flex-start;
+    font-weight: bolder;
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+    padding: 5px 0px;
+    border-bottom: 3px solid rgb(168, 85, 247);
+    width: 4.6rem;
+}
+
+.form__title {
+    @apply text-4xl;
+    @apply text-brand-dark;
+    @apply font-normal;
+}
+
+.inputgroup {
+    @apply w-full;
+    @apply h-auto;
+    @apply flex;
+    @apply flex-col;
+    @apply justify-start;
+    @apply items-start;
+    @apply space-y-2;
+}
+
+.form__label {
+    @apply w-full;
+    @apply font-normal;
+    @apply text-brand-text;
+    @apply text-xs;
+    @apply flex;
+    @apply justify-between;
+    @apply capitalize;
+}
+
+.form__input {
+    @apply px-5;
+    @apply h-9;
+    @apply 2xl:h-10;
+    @apply w-full;
+    @apply flex;
+    @apply items-center;
+    @apply text-xs;
+    @apply font-normal;
+    @apply text-brand-text;
+    @apply border;
+    @apply border-solid;
+    @apply border-[#F1F1F1];
+    @apply rounded-md;
+    @apply 2xl:text-sm;
+}
+
+.form__input::placeholder {
+    @apply text-gray-400;
+    @apply font-normal;
+    @apply text-[0.7rem];
+    @apply 2xl:text-xs;
+    @apply font-normal;
+}
+
+.form__input:hover {
+    @apply border-brand;
+}
+
+.form__input:focus {
+    @apply ring-2;
+    @apply border-brand;
+    @apply outline-none;
+    @apply ring-brand;
+    @apply ring-opacity-50;
+}
