@@ -18,3 +18,29 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.sidebar  {
+  width: 18vw;
+  background-color: #000000;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.topbar {
+  height: 5.5vh;
+  width: 82vw;
+  margin-left: 18vw;
+  border-bottom: 0.7px solid #c3c3c3;
+  position: fixed;
+  top: 0;
+}
+
+.bodywrap {
+  margin-top: 5.5vh;
+  width: 82vw;
+  margin-left: 18vw;
+  background: #FEFEFE;
+  min-height: calc(94.5vh - 15px);
+  padding: 15px;
+}
