@@ -1,7 +1,19 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import { useMemo } from 'react'
-import styles from '../styles/login.module.css'
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { useMemo, useCallback } from 'react';
+import { Formik, Form } from 'formik';
+import * as Yup from "yup";
+import styles from '../styles/login.module.css';
+
+export type SignupFormValues = {
+  email: string;
+  password: string;
+};
+
+const validationSchema = Yup.object().shape({
+  email: Yup.string().required('This field is required!').email('Input a valid email'),
+  password: Yup.string().required('This field is required!').min(6, 'Password must be up to six(6) characters')
+});
 
 const Signup: NextPage = () => {
   const inputClassName = useMemo(
@@ -10,11 +22,23 @@ const Signup: NextPage = () => {
     [],
   );
 
+  const initialValues = useMemo(
+    (): SignupFormValues => ({
+      email: '',
+      password: '',
+    }),
+    [],
+  );
+
+  const formSubmit = useCallback((values: SignupFormValues, { setSubmitting }) => {
+    setSubmitting(false);
+  }, []);
+
   return (
     <div className={styles.container}>
       <Head>
-        <title>Bitcoin wallet</title>
-        <meta name="description" content="Bitcoinwallet Login" />
+        <title>Bitcoin wallet signup</title>
+        <meta name="description" content="Bitcoinwallet Signup" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -22,47 +46,55 @@ const Signup: NextPage = () => {
         <div className={styles.wrap}>
           <h2 className="form_heading">User Signup</h2>
         </div>
-        <div className={styles.wrap}>
-          <section className="inputgroup">
-            <label htmlFor="URL" className="form__label">
-              Email
-            </label>
-            <div className="flex items-center w-full">
-              <input
-                id="URL"
-                className={inputClassName}
-                type="text"
-                placeholder="Your email"
-              />
+        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={formSubmit} >{({ values, errors, isSubmitting, handleChange }) => (
+          <Form>
+            <div className={styles.wrap}>
+              <section className="inputgroup">
+                <label htmlFor="Email" className="form__label">
+                  Email
+                </label>
+                <div className="flex items-center w-full">
+                  <input
+                    id="email"
+                    className={inputClassName}
+                    type="text"
+                    value={values.email}
+                    placeholder="Your email"
+                    onChange={handleChange}
+                  />
+                </div>
+              </section>
+              {errors.email ? <p className="formErrors">{errors.email}</p> : null}
             </div>
-          </section>
-        </div>
-        <div className={styles.wrap}>
-          <section className="inputgroup">
-            <label htmlFor="URL" className="form__label">
-              Password
-            </label>
-            <div className="flex items-center w-full">
-              <input
-                id="URL"
-                className={inputClassName}
-                type="password"
-                placeholder="Your email"
-              />
+            <div className={styles.wrap}>
+              <section className="inputgroup">
+                <label htmlFor="Password" className="form__label">
+                  Password
+                </label>
+                <div className="flex items-center w-full">
+                  <input
+                    id="password"
+                    className={inputClassName}
+                    type="password"
+                    value={values.password}
+                    onChange={handleChange}
+                    placeholder="Your password"
+                  />
+                </div>
+              </section>
+              {errors.password ? <p className="formErrors">{errors.password}</p> : null}
             </div>
-          </section>
-        </div>
-        <section className={styles.wrap}>
-          <button
-            onClick={() => {}}
-            className="font-bold mt-4 bg-purple-500 text-white rounded p-2 w-full">
-            Create account
-          </button>
-        </section>
+            <section className={styles.wrap}>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="font-bold mt-4 bg-purple-500 text-white rounded p-2 w-full">
+                Create account
+              </button>
+            </section>
+          </Form>
+        )}</Formik>
       </main>
-
-      <footer className={styles.footer}>
-      </footer>
     </div>
   )
 }

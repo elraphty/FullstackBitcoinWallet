@@ -1,13 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import '_variables';
 
-html,
-body {
+html, body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: ITC_AVANT;
 }
 
 a {
@@ -19,21 +18,61 @@ a {
   box-sizing: border-box;
 }
 
+input {
+  margin-bottom: 20px;
+  min-height: 40px;
+}
+
+button {
+  font-family: ITC_AVANT_DEMI;
+}
+
+label.form__label {
+  color: #FFF;
+  margin-bottom: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: ITC_AVANT_DEMI;
+}
+
 .sidebar  {
   width: 18vw;
   background-color: #000000;
   position: absolute;
   top: 0;
   bottom: 0;
+
+  ul {
+    padding: 20px 35px;
+    margin-top: 40px;
+    li {
+      list-style: none;
+      color: $textLightColor;
+      margin-bottom: 25px;
+      font-family: $textFont;
+      font-size: 1rem;
+    }
+  }
 }
 
 .topbar {
-  height: 5.5vh;
+  height: calc(5.5vh) ;
   width: 82vw;
   margin-left: 18vw;
   border-bottom: 0.7px solid #c3c3c3;
   position: fixed;
   top: 0;
+  display: flex;
+  padding: 8px 25px;
+  .right {
+    margin-left: auto;
+    p {
+      font-size: $textSizeSm;
+      padding: 0px;
+      margin: 0px;
+      font-family: ITC_AVANT_DEMI;
+    }
+  }
 }
 
 .bodywrap {
@@ -42,5 +81,17 @@ a {
   margin-left: 18vw;
   background: #FEFEFE;
   min-height: calc(94.5vh - 15px);
-  padding: 15px;
+  padding: 15px 20px;
+
+  .greeting {
+    font-size: $textSizeSm;
+    font-family: ITC_AVANT;
+  }
+}
+
+.formErrors {
+  color: $textLightColor;
+  font-size: $textSizeXs;
+  margin-bottom: 15px;
+  margin-top: -10px;
 }
