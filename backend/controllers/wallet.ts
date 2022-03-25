@@ -50,8 +50,7 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
         };
 
         // Set user private key
-        await knex<User>('users').where('email', email).update({ pk: xprv });
-        console.log('Private key', xprv, email);
+        await knex<User>('users').where({ email }).update({ pk: xprv });
 
         return responseSuccess(res, 200, 'Successfully generated master keys', data);
     } catch (err) {
