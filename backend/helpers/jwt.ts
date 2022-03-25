@@ -12,14 +12,11 @@ dotenv.config();
 const TOKEN_SECRET: any = process.env.TOKEN_SECRET;
 
 export const signUser = (data: User) => {
-    // delete user password
-    delete data.password
-
     const token = jwt.sign(data, TOKEN_SECRET, {
         expiresIn: 1000 * 60 * 60 * 24 * 31,
         jwtid: v4()
-    })
-    return token
+    });
+    return token;
 };
 
 export const verifyUser = (data: string, callback: Function) => {
@@ -33,9 +30,9 @@ export const verifyUser = (data: string, callback: Function) => {
                 message: 'Sorry aunthenticatiom error, try to log in again'
             }
 
-            return callback(err, false)
+            return callback(err, false);
         }
         // eslint-disable-next-line standard/no-callback-literal
         return callback(false, res)
-    })
+    });
 };

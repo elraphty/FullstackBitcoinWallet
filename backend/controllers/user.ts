@@ -51,20 +51,21 @@ export const userLogin = async (req: Request, res: Response, next: NextFunction)
         if (users.length > 0) {
             let user = users[0];
             if (!verifyPassword(pass, user.password)) {
-                return responseError(res, 404, 'Error with login')
+                return responseError(res, 404, 'Error with login');
             }
+
+            // // delete user password and pk
+            delete user.password;
+            delete user.pk;
 
             const token = signUser(user);
 
-            // // delete user password
-            delete user.password
-
             // Add token to user object
-            user.token = token
+            user.token = token;
 
-            return responseSuccess(res, 200, 'Successfully login', user)
+            return responseSuccess(res, 200, 'Successfully login', user);
         } else {
-            return responseError(res, 404, 'Not a valid user')
+            return responseError(res, 404, 'Not a valid user');
         }
     } catch (err) {
         next(err);
