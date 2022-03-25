@@ -21,7 +21,7 @@ const Dashboard: NextPage = () => {
         <Sidebar />
         <Topbar />
         <BodyWrap>
-            <h1 className="greeting">Hello Raphael!</h1>
+            <h1 className="greeting">Hello Bitcoineer!</h1>
         </BodyWrap>
     </>
   )

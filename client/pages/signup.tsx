@@ -1,10 +1,14 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from "yup";
 import styles from '../styles/login.module.css';
 import Link from 'next/link';
+import axios from 'axios';
+import { BASE_URL } from '../helpers/axios';
+import { setToStorage, getFromStorage } from '../helpers/localstorage';
+import { useRouter } from 'next/router';
 
 export type SignupFormValues = {
   email: string;
@@ -17,9 +21,12 @@ const validationSchema = Yup.object().shape({
 });
 
 const Signup: NextPage = () => {
+  const router = useRouter();
+  const [signupError, setSignupError] = useState('');
+
   const inputClassName = useMemo(
     () =>
-      "px-5 h-9 2xl:h-10 w-full flex items-center text-xs font-normal text-brand-text border border-solid border-[#F1F1F1] rounded-md 2xl:text-sm",
+      "px-5 h-9 2xl:h-10 w-full flex items-center text-xs font-normal text-brand-text border border-solid border-[#F1F1F1] rounded-lg 2xl:text-sm",
     [],
   );
 
@@ -32,8 +39,22 @@ const Signup: NextPage = () => {
   );
 
   const formSubmit = useCallback((values: SignupFormValues, { setSubmitting }) => {
+    const body: SignupFormValues = {
+      email: values.email,
+      password: values.password
+    };
+
+    axios.post(`${BASE_URL}user`, body)
+      .then(async res => {
+        await setToStorage('token', res.data.data.token);
+        router.push('/');
+      })
+      .catch(err => {
+        setSignupError('Could not create account');
+      });
+    
     setSubmitting(false);
-  }, []);
+  }, [router]);
 
   return (
     <div className={styles.container}>
@@ -49,6 +70,7 @@ const Signup: NextPage = () => {
         </div>
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={formSubmit} >{({ values, errors, isSubmitting, handleChange }) => (
           <Form>
+            {signupError? <p className="formErrors">{signupError}</p> : null }
             <div className={styles.wrap}>
               <section className="inputgroup">
                 <label htmlFor="Email" className="form__label">
@@ -61,6 +83,7 @@ const Signup: NextPage = () => {
                     type="text"
                     value={values.email}
                     placeholder="Your email"
+                    autoComplete="off"
                     onChange={handleChange}
                   />
                 </div>
@@ -77,6 +100,7 @@ const Signup: NextPage = () => {
                     id="password"
                     className={inputClassName}
                     type="password"
+                    autoComplete="off"
                     value={values.password}
                     onChange={handleChange}
                     placeholder="Your password"
@@ -89,7 +113,7 @@ const Signup: NextPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="font-bold mt-4 bg-purple-500 text-white rounded p-2 w-full">
+                className="font-bold mt-4 bg-purple-500 text-white rounded-lg p-2 w-full">
                 Create account
               </button>
             </section>

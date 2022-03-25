@@ -33,7 +33,7 @@ const Login: NextPage = () => {
 
   const inputClassName = useMemo(
     () =>
-      "px-5 h-9 2xl:h-10 w-full flex items-center text-xs font-normal text-brand-text border border-solid border-[#F1F1F1] rounded-md 2xl:text-sm",
+      "px-5 h-9 2xl:h-10 w-full flex items-center text-xs font-normal text-brand-text border border-solid border-[#F1F1F1] rounded-lg 2xl:text-sm",
     [],
   );
 
@@ -59,6 +59,7 @@ const Login: NextPage = () => {
       .catch(err => {
         setLoginError('Could not login, username or password is incorrect');
       });
+    
     setSubmitting(false);
   }, [router]);
 
@@ -76,7 +77,7 @@ const Login: NextPage = () => {
         </div>
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={formSubmit} >{({ values, errors, isSubmitting, handleChange }) => (
           <Form>
-            {loginError? <p className="formErrors">{loginError}</p> : null }
+            {loginError? <p className="formErrors">{loginError}</p> : null}
             <div className={styles.wrap}>
               <section className="inputgroup">
                 <label htmlFor="Email" className="form__label">
@@ -117,7 +118,7 @@ const Login: NextPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="font-bold mt-4 bg-purple-500 text-white rounded p-2 w-full">
+                className="font-bold mt-4 bg-purple-500 text-white rounded-lg p-2 w-full">
                 Login
               </button>
             </section>
