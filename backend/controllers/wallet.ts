@@ -10,6 +10,7 @@ import { createTransaction, getAddressFromChildPubkey, signTransaction, createAd
 import { serializeTxs } from "../helpers/transactions";
 import { validationResult } from 'express-validator';
 import knex from '../db/knex';
+import { User } from "../interfaces/knex";
 
 const bip32 = BIP32Factory(ecc);
 
@@ -35,9 +36,7 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
             return responseErrorValidation(res, 400, errors.array());
         }
 
-        const password: string = req.body.password;
-        const mnemonic: string = req.body.mnemonic;
-        const email: string = req.body.email;
+        const {email, password, mnemonic} = req.body;
 
         const seed = await mnemonicToSeed(mnemonic, password);
         const node = bip32.fromSeed(seed, networks.testnet);
@@ -51,7 +50,8 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
         };
 
         // Set user private key
-        await knex('users').where({ email }).update({ pk: xprv });
+        await knex<User>('users').where('email', email).update({ pk: xprv });
+        console.log('Private key', xprv, email);
 
         return responseSuccess(res, 200, 'Successfully generated master keys', data);
     } catch (err) {
