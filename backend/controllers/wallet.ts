@@ -9,6 +9,7 @@ import { Address, BlockstreamAPITransactionResponse, DecoratedUtxo, SignedTransa
 import { createTransaction, getAddressFromChildPubkey, signTransaction, createAddressBatch, changeAddressBatch, createDecoratedUTXOs } from "../helpers/bitcoinlib";
 import { serializeTxs } from "../helpers/transactions";
 import { validationResult } from 'express-validator';
+import knex from '../db/knex';
 
 const bip32 = BIP32Factory(ecc);
 
@@ -34,8 +35,11 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
             return responseErrorValidation(res, 400, errors.array());
         }
 
+        const password: string = req.body.password;
         const mnemonic: string = req.body.mnemonic;
-        const seed = await mnemonicToSeed(mnemonic);
+        const email: string = req.body.email;
+
+        const seed = await mnemonicToSeed(mnemonic, password);
         const node = bip32.fromSeed(seed, networks.testnet);
         const xprv = node.toBase58();
 
@@ -45,6 +49,9 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
             xprv,
             xpub,
         };
+
+        // Set user private key
+        await knex('users').where({ email }).update({ pk: xprv });
 
         return responseSuccess(res, 200, 'Successfully generated master keys', data);
     } catch (err) {

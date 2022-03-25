@@ -10,7 +10,23 @@ export const generateKeys = [
     .rtrim()
     .whitelist(myWhitelist)
     .escape()
-    .withMessage('Enter your 24 characters long mnemonic words')
+    .withMessage('Send your 24 characters long mnemonic words'),
+  body('password')
+    .not().isEmpty()
+    .isString()
+    .ltrim()
+    .rtrim()
+    .whitelist(myWhitelist)
+    .escape()
+    .withMessage('Password is required'),
+  body('email')
+    .not().isEmpty()
+    .isEmail()
+    .ltrim()
+    .rtrim()
+    .whitelist(myWhitelist)
+    .escape()
+    .withMessage('Email is required')
 ]
 
 export const generateAdd = [
