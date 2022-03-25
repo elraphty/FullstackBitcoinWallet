@@ -1,0 +1,29 @@
+.container {
+  padding: 0rem;
+}
+
+.main {
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+}
+
+.wrap {
+  width: 30vw;
+  @media (max-width: 1000px) {
+    width: 40vw;
+  };
+  @media (max-width: 800px) {
+    width: 45vw;
+  };
+  @media (max-width: 500px) {
+    width: 60vw;
+  };
+  @media (max-width: 400px) {
+    width: 70vw;
+  };
+}

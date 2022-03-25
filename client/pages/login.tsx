@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import styles from '../styles/login.module.css';
 import { Formik, Form } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from "yup";
@@ -64,21 +63,21 @@ const Login: NextPage = () => {
   }, [router]);
 
   return (
-    <div className={styles.container}>
+    <div className="container">
       <Head>
         <title>Bitcoin wallet</title>
         <meta name="description" content="Bitcoinwallet Login" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <div className={styles.wrap}>
+      <main className="main">
+        <div className="wrap">
           <h2 className="form_heading">User Login</h2>
         </div>
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={formSubmit} >{({ values, errors, isSubmitting, handleChange }) => (
           <Form>
             {loginError? <p className="formErrors">{loginError}</p> : null}
-            <div className={styles.wrap}>
+            <div className="wrap">
               <section className="inputgroup">
                 <label htmlFor="Email" className="form__label">
                   Email
@@ -96,7 +95,7 @@ const Login: NextPage = () => {
               </section>
               {errors.email ? <p className="formErrors">{errors.email}</p> : null}
             </div>
-            <div className={styles.wrap}>
+            <div className="wrap">
               <section className="inputgroup">
                 <label htmlFor="Password" className="form__label">
                   Password
@@ -114,7 +113,7 @@ const Login: NextPage = () => {
               </section>
               {errors.password ? <p className="formErrors">{errors.password}</p> : null}
             </div>
-            <section className={styles.wrap}>
+            <section className="wrap">
               <button
                 type="submit"
                 disabled={isSubmitting}

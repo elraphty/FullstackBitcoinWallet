@@ -3,7 +3,6 @@ import Head from 'next/head';
 import { useMemo, useCallback, useState, useRef, ChangeEvent } from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from "yup";
-import styles from '../styles/login.module.css';
 import Link from 'next/link';
 import axios from 'axios';
 import { BASE_URL } from '../helpers/axios';
@@ -90,21 +89,21 @@ const Signup: NextPage = () => {
   }, [email, password, router]);
 
   return (
-    <div className={styles.container}>
+    <div className="container">
       <Head>
         <title>Bitcoin wallet signup</title>
         <meta name="description" content="Bitcoinwallet Signup" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <div className={styles.wrap}>
+      <main className="main">
+        <div className="wrap">
           <h2 className="form_heading">User Signup</h2>
         </div>
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={formSubmit} >{({ values, errors, isSubmitting, handleChange }) => (
           <Form>
             {signupError ? <p className="formErrors">{signupError}</p> : null}
-            <div className={styles.wrap}>
+            <div className="wrap">
               <section className="inputgroup">
                 <label htmlFor="Email" className="form__label">
                   Email
@@ -123,7 +122,7 @@ const Signup: NextPage = () => {
               </section>
               {errors.email ? <p className="formErrors">{errors.email}</p> : null}
             </div>
-            <div className={styles.wrap}>
+            <div className="wrap">
               <section className="inputgroup">
                 <label htmlFor="Password" className="form__label">
                   Password
@@ -142,7 +141,7 @@ const Signup: NextPage = () => {
               </section>
               {errors.password ? <p className="formErrors">{errors.password}</p> : null}
             </div>
-            <section className={styles.wrap}>
+            <section className="wrap">
               <button
                 type="submit"
                 disabled={isSubmitting}
