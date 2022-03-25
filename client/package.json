@@ -9,11 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "axios": "^0.26.1",
     "formik": "^2.2.9",
     "next": "12.1.0",
     "node-sass": "^7.0.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "sweetalert": "^2.1.2",
     "yup": "^0.32.11"
   },
   "devDependencies": {

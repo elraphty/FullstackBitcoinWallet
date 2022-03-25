@@ -6,7 +6,7 @@
 html, body {
   padding: 0;
   margin: 0;
-  font-family: ITC_AVANT;
+  font-family: $font;
 }
 
 a {
@@ -24,7 +24,7 @@ input {
 }
 
 button {
-  font-family: ITC_AVANT_DEMI;
+  font-family: $fontDemi;
 }
 
 label.form__label {
@@ -32,7 +32,7 @@ label.form__label {
   margin-bottom: 5px;
   font-size: 1rem;
   font-weight: bold;
-  font-family: ITC_AVANT_DEMI;
+  font-family: $fontDemi;
 }
 
 .sidebar  {
@@ -70,7 +70,8 @@ label.form__label {
       font-size: $textSizeSm;
       padding: 0px;
       margin: 0px;
-      font-family: ITC_AVANT_DEMI;
+      font-family: $fontDemi;
+      cursor: pointer;
     }
   }
 }
@@ -79,19 +80,27 @@ label.form__label {
   margin-top: 5.5vh;
   width: 82vw;
   margin-left: 18vw;
-  background: #FEFEFE;
+  background: $textLightColor;
   min-height: calc(94.5vh - 15px);
   padding: 15px 20px;
 
   .greeting {
     font-size: $textSizeSm;
-    font-family: ITC_AVANT;
+    font-family: $font;
   }
 }
 
 .formErrors {
-  color: $textLightColor;
+  color: $textLightError;
   font-size: $textSizeXs;
   margin-bottom: 15px;
   margin-top: -10px;
+}
+
+.form_btm_link {
+  color: $textLightColor;
+  font-size: $textSizeXs;
+  margin-top: 15px;
+  text-align: center;
+  font-family: $fontDemi;
 }
