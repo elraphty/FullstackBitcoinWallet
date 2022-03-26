@@ -61,14 +61,23 @@ label.form__label {
   bottom: 0;
 
   ul {
-    padding: 20px 35px;
+    padding: 20px;
     margin-top: 40px;
     li {
       list-style: none;
       color: $textLightColor;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       font-family: $textFont;
       font-size: 1rem;
+      width: 100%;
+      a {
+        padding: 5px 15px;
+        display: block;
+      }
+      a:hover {
+        background: $primaryButton;
+        width: 100%;
+      }
     }
   }
 }
@@ -100,7 +109,7 @@ label.form__label {
   margin-left: 18vw;
   background: $textLightColor;
   min-height: calc(94.5vh - 15px);
-  padding: 15px 20px;
+  padding: 20px 25px;
 
   .greeting {
     font-size: $textSizeSm;

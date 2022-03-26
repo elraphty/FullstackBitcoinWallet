@@ -1,8 +1,8 @@
 import type { NextPage } from 'next';
 import { useEffect } from 'react';
-import Sidebar from '../components/sidebar';
-import Topbar from '../components/topbar';
-import BodyWrap from '../components/bodywrap';
+import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
+import BodyWrap from '../components/BodyWrap';
 import { useRouter } from 'next/router';
 import { getFromStorage } from '../helpers/localstorage';
 

@@ -5,10 +5,10 @@ const Sidebar: NextPage = () => {
   return (
     <div className='sidebar'>
       <ul>
-        <li>Addresses</li>
-        <li>Utxos</li>
-        <li>Transactions</li>
-        <li>Wallet</li>
+        <li><Link href="/addresses">Addresses</Link></li>
+        <li><Link href="/">Utxos</Link></li>
+        <li><Link href="/">Transactions</Link></li>
+        <li><Link href="/">Wallet</Link></li>
       </ul>
     </div>
   )
