@@ -3,6 +3,7 @@ export interface User {
     email: string;
     password?: string;
     pk?: string;
+    pub?: string;
 }
 
 export interface UserLogin extends User {
