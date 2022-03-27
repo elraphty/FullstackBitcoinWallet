@@ -1,9 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import AddressRow from './components/AddressRow';
 import EmptyState from './components/EmptyState';
 import Sidebar from '../../components/Sidebar';
 import Topbar from '../../components/Topbar';
 import BodyWrap from '../../components/BodyWrap';
+import axios from 'axios';
+import { BASE_URL } from '../../helpers/axios';
+import { getFromStorage } from '../../helpers/localstorage';
 
 import { Address } from '../types';
 
@@ -11,6 +14,26 @@ export default function Addresses() {
     const [currentTab, setCurrentTab] = useState("external");
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [changeAddresses, setChangeAddresses] = useState<Address[]>([]);
+
+    useEffect(() => {
+        const getAddresses = async () => {
+            const token = await getFromStorage('token');
+
+            if (token) {
+                const addresses = await axios.post(`${BASE_URL}wallet/getaddress`, {}, {
+                    headers: {
+                        'Content-type': 'application/json',
+                        Authorization: `BEARER ${String(token)}`
+                    }
+                });
+
+                setAddresses(addresses.data.data.address);
+                setChangeAddresses(addresses.data.data.changeAddress);
+            }
+        };
+
+        getAddresses();
+    }, [])
 
     const classNames = (...classes: string[]) => {
         return classes.filter(Boolean).join(" ");

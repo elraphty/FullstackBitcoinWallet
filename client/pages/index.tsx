@@ -3,19 +3,8 @@ import { useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
 import BodyWrap from '../components/BodyWrap';
-import { useRouter } from 'next/router';
-import { getFromStorage } from '../helpers/localstorage';
 
 const Dashboard: NextPage = () => {
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = getFromStorage('token');
-    if(!token) {
-      router.push('/login');
-    }
-  }, [router])
-
   return (
     <>
         <Sidebar />

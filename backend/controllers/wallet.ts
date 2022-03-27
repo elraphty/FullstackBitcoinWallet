@@ -11,6 +11,7 @@ import { serializeTxs } from "../helpers/transactions";
 import { validationResult } from 'express-validator';
 import knex from '../db/knex';
 import { User } from "../interfaces/knex";
+import { encryptKey, decryptKey } from "../helpers/encryptKey";
 
 const bip32 = BIP32Factory(ecc);
 
@@ -49,8 +50,10 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
             xpub,
         };
 
+        const enKey = encryptKey(xprv);
+
         // Set user private key
-        await knex<User>('users').where({ email }).update({ pk: xprv, pub: xpub });
+        await knex<User>('users').where({ email }).update({ pk: enKey, pub: xpub });
 
         return responseSuccess(res, 200, 'Successfully generated master keys', data);
     } catch (err) {
@@ -67,17 +70,18 @@ export const generateAddress = async (req: Request, res: Response, next: NextFun
             return responseErrorValidation(res, 400, errors.array());
         }
     
-        const xpub: string = req.body.publicKey;
+        // @ts-ignore
+        const xpub = req.user.pub;
 
         const node: BIP32Interface = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
 
-        const child = node.neutered().toBase58();
+        const currentAddressBatch: Address[] = createAddressBatch(xpub, node);
 
-        const { address } = getAddressFromChildPubkey(node);
+        const currentChangeAddressBatch: Address[] = changeAddressBatch(xpub, node);
 
         const data = {
-            child,
-            address,
+            address: currentAddressBatch,
+            changeAddress: currentChangeAddressBatch,
         };
 
         return responseSuccess(res, 200, 'Successfully generated address', data);

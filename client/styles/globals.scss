@@ -108,7 +108,8 @@ label.form__label {
   width: 82vw;
   margin-left: 18vw;
   background: $textLightColor;
-  min-height: calc(94.5vh - 15px);
+  max-height: calc(94.5vh - 15px);
+  overflow-y: scroll;
   padding: 20px 25px;
 
   .greeting {
