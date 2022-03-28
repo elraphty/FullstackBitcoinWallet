@@ -97,8 +97,9 @@ export const getUtxos = async (req: Request, res: Response, next: NextFunction):
         if (!errors.isEmpty()) {
             return responseErrorValidation(res, 400, errors.array());
         }
-
-        const xpub: string = req.body.publicKey;
+        
+        // @ts-ignore
+        const xpub = req.user.pub;
 
         const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
 

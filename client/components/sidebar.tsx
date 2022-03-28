@@ -6,7 +6,7 @@ const Sidebar: NextPage = () => {
     <div className='sidebar'>
       <ul>
         <li><Link href="/addresses">Addresses</Link></li>
-        <li><Link href="/">Utxos</Link></li>
+        <li><Link href="/utxos">Utxos</Link></li>
         <li><Link href="/">Transactions</Link></li>
         <li><Link href="/">Wallet</Link></li>
       </ul>

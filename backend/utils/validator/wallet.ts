@@ -30,13 +30,13 @@ export const generateKeys = [
 ]
 
 export const generateAdd = [
-  // body('publicKey')
-  //   .not().isEmpty()
-  //   .isString()
-  //   .ltrim()
-  //   .rtrim()
-  //   .escape()
-  //   .withMessage('Requires public key')
+  body('publicKey')
+    .not().isEmpty()
+    .isString()
+    .ltrim()
+    .rtrim()
+    .escape()
+    .withMessage('Requires public key')
 ]
 
 export const broadcastTx = [
