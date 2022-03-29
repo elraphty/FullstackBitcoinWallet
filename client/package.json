@@ -13,6 +13,7 @@
     "axios": "^0.26.1",
     "bitcoinjs-lib": "^6.0.1",
     "formik": "^2.2.9",
+    "moment": "^2.29.1",
     "next": "12.1.0",
     "node-sass": "^7.0.1",
     "react": "17.0.2",

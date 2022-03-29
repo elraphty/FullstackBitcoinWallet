@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import AddressRow from './components/AddressRow';
 import EmptyState from './components/EmptyState';
-import Sidebar from '../../components/Sidebar';
-import Topbar from '../../components/Topbar';
 import BodyWrap from '../../components/BodyWrap';
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/axios';
 import { getFromStorage } from '../../helpers/localstorage';
+import Loader from '../../components/Loader';
 
 import { Address } from '../types';
 
@@ -14,12 +13,15 @@ export default function Addresses() {
     const [currentTab, setCurrentTab] = useState("external");
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [changeAddresses, setChangeAddresses] = useState<Address[]>([]);
+    const [isLoading, setIsLoading] = useState<Boolean>(false);
 
     useEffect(() => {
         const getAddresses = async () => {
             const token = await getFromStorage('token');
 
             if (token) {
+                setIsLoading(true);
+
                 const addresses = await axios.post(`${BASE_URL}wallet/getaddress`, {}, {
                     headers: {
                         'Content-type': 'application/json',
@@ -29,6 +31,7 @@ export default function Addresses() {
 
                 setAddresses(addresses.data.data.address);
                 setChangeAddresses(addresses.data.data.changeAddress);
+                setIsLoading(false);
             }
         };
 
@@ -57,10 +60,8 @@ export default function Addresses() {
 
     return (
         <>
-            <Sidebar />
-            <Topbar />
             <BodyWrap>
-                <div className="min-h-full">
+                {!isLoading ? (<div className="min-h-full">
                     <main className="flex-1">
                         <div className="">
                             <div className="max-w-7xl mx-auto">
@@ -148,7 +149,7 @@ export default function Addresses() {
                             </div>
                         </div>
                     </main>
-                </div>
+                </div>) : <Loader />}
             </BodyWrap>
         </>
     );
