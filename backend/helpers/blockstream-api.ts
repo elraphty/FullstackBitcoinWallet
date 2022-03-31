@@ -8,8 +8,6 @@ import {
   BlockstreamAPIUtxoResponse,
 } from "../interfaces/blockstream";
 
-// const BASE_URL = "https://blockstream.info/testnet/api/";
-
 export const getTransactionsFromAddress = async (
   address: Address
 ): Promise<BlockstreamAPITransactionResponse[]> => {

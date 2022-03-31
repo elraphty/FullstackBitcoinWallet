@@ -47,17 +47,17 @@ const CreateTxForm = ({ createTransaction, error }: Props) => {
                                             >
                                                 Send bitcoin to...
                                             </label>
-                                            <div className="mt-1 flex rounded-md shadow-sm">
+                                            <div className="mt-1 rounded-md shadow-sm">
                                                 <input
                                                     type="text"
                                                     name="recipientAddress"
-                                                    className="focus:ring-tabconf-blue-500 focus:border-tabconf-blue-500 flex-1 block w-full rounded-md sm:text-sm border-gray-300"
+                                                    className="flex-1 block w-full rounded-md sm:text-s px-3 border-solid border-2 border-[#C8C8C9]"
                                                     placeholder="bc1qlhh35k7e6g9zqk6rnxp246a992pduq0jfg0fnl"
                                                     value={values.recipientAddress}
                                                     onChange={handleChange}
                                                 />
-                                                {errors.recipientAddress ? <p className="formErrors">{errors.recipientAddress}</p> : null}
                                             </div>
+                                            {errors.recipientAddress ? <p className="formErrors">{errors.recipientAddress}</p> : null}
                                         </div>
                                     </div>
 
@@ -73,7 +73,7 @@ const CreateTxForm = ({ createTransaction, error }: Props) => {
                                                 <input
                                                     type="text"
                                                     name="amountToSend"
-                                                    className="focus:ring-tabconf-blue-500 focus:border-tabconf-blue-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md"
+                                                    className="block w-full pr-12 sm:text-sm rounded-md px-3 border-solid border-2 border-[#C8C8C9]"
                                                     placeholder="42069"
                                                     aria-describedby="price-currency"
                                                     value={values.amountToSend}
@@ -87,8 +87,8 @@ const CreateTxForm = ({ createTransaction, error }: Props) => {
                                                         sats
                                                     </span>
                                                 </div>
-                                                {errors.amountToSend ? <p className="formErrors">{errors.amountToSend}</p> : null}
                                             </div>
+                                            {errors.amountToSend ? <p className="formErrors">{errors.amountToSend}</p> : null}
                                         </div>
                                     </div>
                                 </div>
@@ -100,7 +100,7 @@ const CreateTxForm = ({ createTransaction, error }: Props) => {
                                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                                     <button
                                         disabled={isSubmitting}
-                                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-black bg-tabconf-blue-600 hover:bg-tabconf-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tabconf-blue-500"
+                                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-gray-700 bg-tabconf-blue-600 hover:bg-tabconf-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tabconf-blue-500"
                                         type="submit"
                                     >
                                         Create transaction
