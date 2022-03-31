@@ -4,9 +4,8 @@ import EmptyState from './components/EmptyState';
 import UtxoRow from './components/UtxoRow';
 import BodyWrap from '../../components/BodyWrap';
 import Loader from '../../components/Loader';
-import axios from 'axios';
-import { BASE_URL } from '../../helpers/axios';
 import { getFromStorage } from '../../helpers/localstorage';
+import { getWithToken } from '../../helpers/axios';
 
 export default function Utxos() {
   const [utxos, setUtxos] = useState<DecoratedUtxo[]>([]);
@@ -20,12 +19,7 @@ export default function Utxos() {
       if (token) {
         setIsLoading(true);
 
-        const utxosRes = await axios.post(`${BASE_URL}wallet/utxos`, {}, {
-          headers: {
-            'Content-type': 'application/json',
-            Authorization: `BEARER ${token}`
-          }
-        });
+        const utxosRes = await getWithToken('wallet/utxos', token);
 
         setUtxos(utxosRes.data.data);
         setIsLoading(false);

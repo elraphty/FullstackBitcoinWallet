@@ -2,9 +2,8 @@ import TransactionRow from './components/TransactionRow';
 import EmptyState from './components/EmptyState';
 import BodyWrap from '../../components/BodyWrap';
 import Loader from '../../components/Loader';
-import axios from 'axios';
-import { BASE_URL } from '../../helpers/axios';
 import { getFromStorage } from '../../helpers/localstorage';
+import { getWithToken } from '../../helpers/axios';
 
 import { DecoratedTx } from '../types';
 import { useEffect, useState } from 'react';
@@ -20,16 +19,9 @@ export default function Transactions() {
       if (token) {
         setIsLoading(true);
 
-        const transRes = await axios.post(`${BASE_URL}wallet/transactions`, {}, {
-          headers: {
-            'Content-type': 'application/json',
-            Authorization: `BEARER ${token}`
-          }
-        });
+        const transRes = await getWithToken('wallet/transactions', token);
 
         setIsLoading(false);
-
-        console.log('Tranasction Res ===', transRes);
         setTransactions(transRes.data.data);
       }
     };

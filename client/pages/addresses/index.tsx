@@ -2,9 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import AddressRow from './components/AddressRow';
 import EmptyState from './components/EmptyState';
 import BodyWrap from '../../components/BodyWrap';
-import axios from 'axios';
-import { BASE_URL } from '../../helpers/axios';
 import { getFromStorage } from '../../helpers/localstorage';
+import { getWithToken } from '../../helpers/axios';
 import Loader from '../../components/Loader';
 
 import { Address } from '../types';
@@ -22,12 +21,7 @@ export default function Addresses() {
             if (token) {
                 setIsLoading(true);
 
-                const addresses = await axios.post(`${BASE_URL}wallet/getaddress`, {}, {
-                    headers: {
-                        'Content-type': 'application/json',
-                        Authorization: `BEARER ${String(token)}`
-                    }
-                });
+                const addresses = await getWithToken('wallet/getaddress', token);
 
                 setAddresses(addresses.data.data.address);
                 setChangeAddresses(addresses.data.data.changeAddress);

@@ -9,14 +9,14 @@ router.get('/mnenomic', generateMnenomic);
 
 router.post('/privatekey', generateKeys, generateMasterKeys)
 
-router.post('/getaddress', authUser, generateAddress)
+router.get('/getaddress', authUser, generateAddress)
 
-router.post('/utxos', authUser, getUtxos)
+router.get('/utxos', authUser, getUtxos)
 
-router.post('/transactions', getTransactions)
+router.get('/transactions', authUser, getTransactions)
 
-router.post('/createtransaction', createTransactions)
+router.post('/createtransaction', authUser, createTransactions)
 
-router.post('/broadcasttransaction', broadcastTx, broadcastTransaction)
+router.post('/broadcasttransaction', authUser, broadcastTx,  broadcastTransaction)
 
 export default router;

@@ -119,7 +119,8 @@ export const getUtxos = async (req: Request, res: Response, next: NextFunction):
 
 export const getTransactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const xpub: string = req.body.publicKey;
+        // @ts-ignore
+        const xpub = req.user.pub;
 
         const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
 
@@ -153,12 +154,19 @@ export const getTransactions = async (req: Request, res: Response, next: NextFun
 
 export const createTransactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const xpub: string = req.body.publicKey;
+        // @ts-ignore
+        const xpub = req.user.pub;
         const recipientAddress: string = req.body.recipientAddress;
         const amount: number = req.body.amount;
-        const xprv: string = req.body.privateKey;
+
+        // @ts-ignore
+        const getPriv = await knex<User>('users').where('email', req.user.email).first();
+
+        const xprv: string = decryptKey(getPriv?.pk || '');
 
         const root = bip32.fromBase58(xprv, networks.testnet);
+
+        // console.log('Private Key ====', xprv, ' ', xpub, ' ', root, ' ', recipientAddress);
 
         const currentAddressBatch: Address[] = createAddressBatch(xpub, root);
 
@@ -174,7 +182,12 @@ export const createTransactions = async (req: Request, res: Response, next: Next
         // Sign the transaction
         const signedTransactionHex: SignedTransactionData = await signTransaction(transaction, root);
 
-        responseSuccess(res, 200, 'Successfully created and signed transaction', signedTransactionHex);
+        const data = {
+            tHex: signedTransactionHex,
+            transaction
+        }
+
+        responseSuccess(res, 200, 'Successfully created and signed transaction', data);
     } catch (err) {
         next(err);
     }
@@ -184,6 +197,7 @@ export const broadcastTransaction = async (req: Request, res: Response, next: Ne
     try {
         // Finds the validation errors in this request and wraps them in an object with handy functions
         const errors = validationResult(req);
+
         if (!errors.isEmpty()) {
             return responseErrorValidation(res, 400, errors.array());
         }

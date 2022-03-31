@@ -1,4 +1,6 @@
-import axios from "axios";
+import axios from 'axios';
+
+axios.defaults.baseURL = 'https://blockstream.info/testnet/api';
 
 import {
   Address,
@@ -6,13 +8,13 @@ import {
   BlockstreamAPIUtxoResponse,
 } from "../interfaces/blockstream";
 
-const BASE_URL = "https://blockstream.info/testnet/api/";
+// const BASE_URL = "https://blockstream.info/testnet/api/";
 
 export const getTransactionsFromAddress = async (
   address: Address
 ): Promise<BlockstreamAPITransactionResponse[]> => {
   const { data } = await axios.get(
-    `${BASE_URL}/address/${address.address}/txs`
+    `/address/${address.address}/txs`
   );
   return data;
 };
@@ -21,26 +23,28 @@ export const getUtxosFromAddress = async (
   address: Address
 ): Promise<BlockstreamAPIUtxoResponse[]> => {
   const { data } = await axios.get(
-    `${BASE_URL}/address/${address.address}/utxo`
+    `/address/${address.address}/utxo`
   );
 
   return data;
 };
 
-export const getTransactionHex = async(txid: string): Promise<string> => {
+export const getTransactionHex = async (txid: string): Promise<string> => {
   const { data } = await axios.get(
-    `${BASE_URL}/tx/${txid}/hex`
+    `/tx/${txid}/hex`
   );
 
   return data;
 };
 
-export const getFeeRates = async () => {
-  throw new Error("Function not implemented yet");
+export const getFeeRates = async (): Promise<Object> => {
+  const { data } = await axios.get(`/fee-estimates`);
+
+  return data;
 };
 
 export const broadcastTx = async (txHex: string): Promise<string> => {
-  const { data } = await axios.post(`${BASE_URL}/tx`, txHex);
+  const { data } = await axios.post(`/tx`, txHex);
 
   return data;
 };

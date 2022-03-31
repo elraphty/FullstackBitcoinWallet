@@ -68,7 +68,6 @@ export const createTransaction = async (
 
   // Implement dynamic fee rate 
   // const feeRate = await getFeeRates();
-
   const { inputs, outputs, fee } = coinSelect(
     utxos,
     [
@@ -90,11 +89,12 @@ export const createTransaction = async (
 
   for (let input of inputs) {
     const txHex = await getTransactionHex(input.txid);
+    // console .log('Transaction Hex ===', txHex);
 
     psbt.addInput({
       hash: input.txid,
       index: input.vout,
-      // sequence: 0xfffffffd, // enables RBF
+      sequence: 0xfffffffd, // enables RBF
       // witnessUtxo: {
       //   value: input.value,
       //   script: input.address.output!,
