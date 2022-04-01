@@ -19,6 +19,7 @@ const Sidebar: NextPage = () => {
         <li className={`${url === 'transactions' ? 'activeLink' : ''}`}><Link href="/transactions">Transactions</Link></li>
         <li className={`${url === 'send' ? 'activeLink' : ''}`}><Link href="/send">Send</Link></li>
         <li className={`${url === 'receive' ? 'activeLink' : ''}`}><Link href="/receive">Receive</Link></li>
+        <li className={`${url === 'settings' ? 'activeLink' : ''}`}><Link href="/settings">Settings</Link></li>
       </ul>
     </div>
   )

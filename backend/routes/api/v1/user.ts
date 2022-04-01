@@ -4,8 +4,8 @@ import { createUser } from '../../../utils/validator/user';
 
 const router: Router = express.Router();
 
-router.post('/', createUser, registerUser)
+router.post('/', createUser, registerUser);
 
-router.post('/login', createUser, userLogin)
+router.post('/login', createUser, userLogin);
 
 export default router;

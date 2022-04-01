@@ -159,14 +159,13 @@ export const createTransactions = async (req: Request, res: Response, next: Next
         const recipientAddress: string = req.body.recipientAddress;
         const amount: number = req.body.amount;
 
+        // Get Users encryoted private key from the database and decrypt it
         // @ts-ignore
         const getPriv = await knex<User>('users').where('email', req.user.email).first();
 
         const xprv: string = decryptKey(getPriv?.pk || '');
 
         const root = bip32.fromBase58(xprv, networks.testnet);
-
-        // console.log('Private Key ====', xprv, ' ', xpub, ' ', root, ' ', recipientAddress);
 
         const currentAddressBatch: Address[] = createAddressBatch(xpub, root);
 
@@ -207,6 +206,56 @@ export const broadcastTransaction = async (req: Request, res: Response, next: Ne
         const data = await broadcastTx(txHex);
 
         responseSuccess(res, 200, 'Successfully broadcasted transaction', data);
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const getPublicKey = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return responseErrorValidation(res, 400, errors.array());
+        }
+        
+        // @ts-ignore
+        const email: string = req.user.email;
+
+        // Set user private key
+        const user = await knex<User>('users').where({ email }).first();
+
+        const pubKey = user?.pub;
+
+        responseSuccess(res, 200, 'Successfully broadcasted transaction', pubKey);
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+
+export const getPrivateKey = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return responseErrorValidation(res, 400, errors.array());
+        }
+        
+        // @ts-ignore
+        const email: string = req.user.email;
+
+        // Get user data
+        const user = await knex<User>('users').where({ email }).first();
+
+        // Decryot private key 
+        const xprv: string = decryptKey(user?.pk || '');
+
+        responseSuccess(res, 200, 'Successfully broadcasted transaction', xprv);
 
     } catch (err) {
         next(err);

@@ -28,11 +28,10 @@ export default function Transactions() {
 
     getTransactions();
   }, []);
-  
+
   return (
-    <>
-      <BodyWrap>
-        {!isLoading ? (
+    <BodyWrap>
+      {!isLoading ? (
         <div className="min-h-full">
           <main className="flex-1">
             <div className="">
@@ -59,7 +58,6 @@ export default function Transactions() {
           </main>
         </div>) : <Loader />}
 
-      </BodyWrap>
-    </>
+    </BodyWrap>
   );
 }
