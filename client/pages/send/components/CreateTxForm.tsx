@@ -67,9 +67,9 @@ const CreateTxForm = ({ createTransaction, error }: Props) => {
                                                 htmlFor="price"
                                                 className="block text-sm font-medium text-gray-700"
                                             >
-                                                Amount to send...
+                                                Amount to send in sats ...
                                             </label>
-                                            <div className="mt-1 relative rounded-md shadow-sm">
+                                            <div className="mt-1 rounded-md shadow-sm">
                                                 <input
                                                     type="text"
                                                     name="amountToSend"
@@ -79,14 +79,6 @@ const CreateTxForm = ({ createTransaction, error }: Props) => {
                                                     value={values.amountToSend}
                                                     onChange={handleChange}
                                                 />
-                                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                    <span
-                                                        className="text-gray-500 sm:text-sm"
-                                                        id="price-currency"
-                                                    >
-                                                        sats
-                                                    </span>
-                                                </div>
                                             </div>
                                             {errors.amountToSend ? <p className="formErrors">{errors.amountToSend}</p> : null}
                                         </div>

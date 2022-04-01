@@ -49,9 +49,9 @@ export default function Utxos() {
             <main className="flex-1">
               <div className="">
                 <div className="max-w-7xl mx-auto">
-                  <h1 className="text-2xl font-semibold text-gray-900">UTXOs</h1>
+                  <h1 className="sm:text-xl xs:text-sm lg:text-2xl font-semibold text-gray-900">UTXOs</h1>
 
-                  <h2 className="text-lg text-purple-600 font-bold mt-3">Wallet balance - {walletBalance / 100000000} BTC</h2>
+                  <h2 className="lg:text-lg sm:text-xl xs:text-sm text-purple-600 font-bold mt-2">Wallet balance - {walletBalance / 100000000} BTC</h2>
                   <div className="py-4">
                     {utxos.length ? (
                       <ul className="mt-5 border-t border-gray-200 divide-y divide-gray-200 sm:mt-0 sm:border-t-0 bg-white rounded-b-md shadow">

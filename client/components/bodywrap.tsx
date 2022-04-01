@@ -4,6 +4,7 @@ import { getFromStorage } from '../helpers/localstorage';
 import { useRouter } from 'next/router';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import MobileNav from './MobileNav';
 import { WalletContextType, WalletProvider } from './WalletContext';
 import { DecoratedUtxo, Address } from '../pages/types';
 import { getWithToken } from '../helpers/axios';
@@ -72,6 +73,7 @@ const BodyWrap: NextPage = (props) => {
     <>
       <Sidebar />
       <Topbar />
+      <MobileNav />
       <WalletProvider value={{ getValue: getContextValue }}>
         <div className='bodywrap'>
           {props.children}

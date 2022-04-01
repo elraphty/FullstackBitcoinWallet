@@ -18,7 +18,7 @@ function Addresses() {
 
     useEffect(() => {
 
-        console.log('Context Value ===', getValue().addresses)
+        // console.log('Context Value ===', getValue().addresses)
         const getAddresses = async () => {
             const token = await getFromStorage('token');
 
@@ -62,7 +62,7 @@ function Addresses() {
                 <main className="flex-1">
                     <div className="">
                         <div className="max-w-7xl mx-auto">
-                            <h1 className="text-2xl font-semibold text-gray-900">Addresses</h1>
+                            <h1 className="sm:text-xl xs:text-sm lg:text-2xl font-semibold text-gray-900">Addresses</h1>
                             <div className="py-4">
                                 <div className="max-w-7xl mx-auto bg-white shadow rounded-t-md">
                                     {/* Tabs */}
@@ -73,7 +73,7 @@ function Addresses() {
                                         <select
                                             id="tabs"
                                             name="tabs"
-                                            className="mt-4 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-tabconf-blue-500 focus:border-tabconf-blue-500 sm:text-sm rounded-md"
+                                            className="mt-4 block w-full pl-3 pr-10 py-2 xs:text-sm text-base border-gray-300 focus:outline-none focus:ring-tabconf-blue-500 focus:border-tabconf-blue-500 sm:text-sm rounded-md"
                                             //   @ts-ignore
                                             defaultValue={tabs.find((tab) => tab.current).name}
                                         >

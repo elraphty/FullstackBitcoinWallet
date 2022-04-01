@@ -36,7 +36,7 @@ export default function Transactions() {
           <main className="flex-1">
             <div className="">
               <div className="max-w-7xl mx-auto">
-                <h1 className="text-2xl font-semibold text-gray-900">
+                <h1 className="sm:text-xl xs:text-sm lg:text-2xl font-semibold text-gray-900">
                   Transactions
                 </h1>
                 <div className="py-4">

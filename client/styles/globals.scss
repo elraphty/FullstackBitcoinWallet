@@ -8,6 +8,8 @@ body {
   padding: 0;
   margin: 0;
   font-family: $font;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 a {
@@ -60,6 +62,11 @@ label.form__label {
   position: absolute;
   top: 0;
   bottom: 0;
+  display: block;
+
+  @media screen and (max-width: 800px) {
+    display: none;
+  }
 
   ul {
     padding: 20px;
@@ -71,6 +78,11 @@ label.form__label {
       font-family: $textFont;
       font-size: 1rem;
       width: 100%;
+
+      @media screen and (max-width: 950px) {
+        font-size: 0.9rem;
+      }
+
       a {
         padding: 5px 15px;
         display: block;
@@ -89,7 +101,7 @@ label.form__label {
 }
 
 .topbar {
-  height: calc(5.5vh);
+  height: 5.5vh;
   width: 82vw;
   margin-left: 18vw;
   border-bottom: 0.7px solid #c3c3c3;
@@ -97,6 +109,12 @@ label.form__label {
   top: 0;
   display: flex;
   padding: 8px 25px;
+  
+  @media screen and (max-width: 800px) {
+    display: none;
+    margin-left: 0;
+  }
+
   .right {
     margin-left: auto;
     p {
@@ -109,6 +127,97 @@ label.form__label {
   }
 }
 
+.mobilenav {
+  display: none;
+  @media screen and (max-width: 800px) {
+    display: block;
+    margin-left: 0;
+    height: 7vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    padding: 6px 25px;
+    border-bottom: 0.7px solid #c3c3c3;
+
+    .right {
+      position: absolute;
+      right: 15px;
+      p {
+        font-size: $textSizeSm;
+        padding: 0px;
+        margin: 0px;
+        font-family: $fontDemi;
+        cursor: pointer;
+      }
+    }
+  }
+  .mobilenav-pop {
+    background-color: #000000;
+    width: 40vw;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    z-index: 200;
+    height: 100vh;
+
+    @media screen and (max-width: 400px) { 
+      width: 50vw;
+    }
+
+    ul {
+      padding: 15px;
+      margin-top: 50px;
+      li {
+        list-style: none;
+        color: $textLightColor;
+        margin-bottom: 18px;
+        font-family: $textFont;
+        font-size: 0.9rem;
+        width: 100%;
+        text-align: right;
+  
+        @media screen and (max-width: 400px) { 
+          font-size: 0.8rem;
+        }
+  
+        a {
+          padding: 5px 15px;
+          display: block;
+        }
+        a:hover {
+          background: $primaryButton;
+          width: 100%;
+        }
+      }
+  
+      li.activeLink a {
+        background-color: #FEFEFE;
+        color: #000000;
+      }
+    }
+
+    p {
+      color: #FFFFFF;
+      font-size: 0.9rem;
+      font-weight: 900;
+      position: absolute;
+      bottom: 20px;
+      right: 30px;
+      cursor: pointer;
+    }
+
+    .cancel-icon {
+      position: absolute;
+      right: 0;
+      align-self: right;
+      background: $primaryButton;
+      padding: 2px;
+      cursor: pointer;
+    }
+  } 
+}
+
 .bodywrap {
   margin-top: 5.5vh;
   width: 82vw;
@@ -117,6 +226,12 @@ label.form__label {
   max-height: $bodyWrapHeight;
   overflow-y: scroll;
   padding: 20px 25px;
+
+  @media screen and (max-width: 800px) {
+    width: 100vw;
+    margin-left: 0;
+    max-height: $bodyMobileWrapHeight;
+  }
 
   .greeting {
     font-size: $textSizeSm;
