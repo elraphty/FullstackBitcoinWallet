@@ -25,7 +25,7 @@ function Addresses() {
             if (token) {
                 setIsLoading(true);
 
-                const addresses = await getWithToken('wallet/getaddress', token);
+                const addresses = await getWithToken('wallet/getaddress?type=p2wpkh', token);
 
                 setAddresses(addresses.data.data.address);
                 setChangeAddresses(addresses.data.data.changeAddress);

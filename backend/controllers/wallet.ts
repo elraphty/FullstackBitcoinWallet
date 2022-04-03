@@ -6,7 +6,7 @@ import { networks, Psbt } from 'bitcoinjs-lib';
 import { responseSuccess, responseErrorValidation } from "../helpers";
 import { broadcastTx, getTransactionsFromAddress } from "../helpers/blockstream-api";
 import { Address, BlockstreamAPITransactionResponse, DecoratedUtxo, SignedTransactionData } from "../interfaces/blockstream";
-import { createTransaction, getAddressFromChildPubkey, signTransaction, createAddressBatch, changeAddressBatch, createDecoratedUTXOs } from "../helpers/bitcoinlib";
+import { createTransaction, signTransaction, createAddressBatch, changeAddressBatch, createDecoratedUTXOs } from "../helpers/bitcoinlib";
 import { serializeTxs } from "../helpers/transactions";
 import { validationResult } from 'express-validator';
 import knex from '../db/knex';
@@ -66,18 +66,22 @@ export const generateAddress = async (req: Request, res: Response, next: NextFun
     try {
         // Finds the validation errors in this request and wraps them in an object with handy functions
         const errors = validationResult(req);
+
         if (!errors.isEmpty()) {
             return responseErrorValidation(res, 400, errors.array());
         }
     
         // @ts-ignore
         const xpub = req.user.pub;
+        const addressType: string | unknown = req.query.type;
+
+        console.log('Type ====', addressType);
 
         const node: BIP32Interface = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
 
-        const currentAddressBatch: Address[] = createAddressBatch(xpub, node);
+        const currentAddressBatch: Address[] = createAddressBatch(xpub, node, addressType);
 
-        const currentChangeAddressBatch: Address[] = changeAddressBatch(xpub, node);
+        const currentChangeAddressBatch: Address[] = changeAddressBatch(xpub, node, addressType);
 
         const data = {
             address: currentAddressBatch,
@@ -101,11 +105,13 @@ export const getUtxos = async (req: Request, res: Response, next: NextFunction):
         // @ts-ignore
         const xpub = req.user.pub;
 
+        const addressType: string = req.body.adType;
+
         const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
 
-        const currentAddressBatch: Address[] = createAddressBatch(xpub, node);
+        const currentAddressBatch: Address[] = createAddressBatch(xpub, node, addressType);
 
-        const currentChangeAddressBatch: Address[] = changeAddressBatch(xpub, node);
+        const currentChangeAddressBatch: Address[] = changeAddressBatch(xpub, node, addressType);
 
         const addresses: Address[] = [...currentAddressBatch, ...currentChangeAddressBatch];
 
@@ -122,11 +128,13 @@ export const getTransactions = async (req: Request, res: Response, next: NextFun
         // @ts-ignore
         const xpub = req.user.pub;
 
+        const addressType: string = req.body.adType;
+
         const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
 
-        const currentAddressBatch: Address[] = createAddressBatch(xpub, node);
+        const currentAddressBatch: Address[] = createAddressBatch(xpub, node, addressType);
 
-        const currentChangeAddressBatch: Address[] = changeAddressBatch(xpub, node);
+        const currentChangeAddressBatch: Address[] = changeAddressBatch(xpub, node, addressType);
 
         const addresses: Address[] = [...currentAddressBatch];
 
@@ -158,6 +166,7 @@ export const createTransactions = async (req: Request, res: Response, next: Next
         const xpub = req.user.pub;
         const recipientAddress: string = req.body.recipientAddress;
         const amount: number = req.body.amount;
+        const addressType: string = req.body.adType;
 
         // Get Users encryoted private key from the database and decrypt it
         // @ts-ignore
@@ -167,9 +176,9 @@ export const createTransactions = async (req: Request, res: Response, next: Next
 
         const root = bip32.fromBase58(xprv, networks.testnet);
 
-        const currentAddressBatch: Address[] = createAddressBatch(xpub, root);
+        const currentAddressBatch: Address[] = createAddressBatch(xpub, root, addressType);
 
-        const currentChangeAddressBatch: Address[] = changeAddressBatch(xpub, root);
+        const currentChangeAddressBatch: Address[] = changeAddressBatch(xpub, root, addressType);
 
         const addresses: Address[] = [...currentAddressBatch, ...currentChangeAddressBatch];
 

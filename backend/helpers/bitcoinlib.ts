@@ -17,10 +17,21 @@ const validator = (
   signature: Buffer,
 ): boolean => ECPair.fromPublicKey(pubkey).verify(msghash, signature);
 
+/// Generate P2PKH address and P2WPKH
 export const getAddressFromChildPubkey = (
-  child: BIP32Interface
+  child: BIP32Interface, type: string | unknown = 'p2pkh'
 ): payments.Payment => {
-  const address = payments.p2pkh({
+  let address: payments.Payment;
+
+  if (type === 'p2wpkh') {
+    address = payments.p2wpkh({
+      pubkey: child.publicKey,
+      network: networks.testnet,
+    });
+
+    return address;
+  }
+  address = payments.p2pkh({
     pubkey: child.publicKey,
     network: networks.testnet,
   });
@@ -119,13 +130,13 @@ export const createTransaction = async (
   return psbt;
 };
 
-export const createAddressBatch = (xpub: string, root: BIP32Interface): Address[] => {
+export const createAddressBatch = (xpub: string, root: BIP32Interface, adType: string | unknown): Address[] => {
   const addressBatch: Address[] = [];
 
   for (let i = 0; i < 10; i++) {
     const derivationPath = `0/${i}`;
     const currentChildPubkey = deriveChildPublicKey(xpub, derivationPath);
-    const currentAddress = getAddressFromChildPubkey(currentChildPubkey);
+    const currentAddress = getAddressFromChildPubkey(currentChildPubkey, adType);
 
     addressBatch.push({
       ...currentAddress,
@@ -137,13 +148,13 @@ export const createAddressBatch = (xpub: string, root: BIP32Interface): Address[
   return addressBatch;
 };
 
-export const changeAddressBatch = (xpub: string, root: BIP32Interface): Address[] => {
+export const changeAddressBatch = (xpub: string, root: BIP32Interface, adType: string | unknown): Address[] => {
   const addressBatch: Address[] = [];
 
   for (let i = 0; i < 10; i++) {
     const derivationPath = `1/${i}`;
     const currentChildPubkey = deriveChildPublicKey(xpub, derivationPath);
-    const currentAddress = getAddressFromChildPubkey(currentChildPubkey);
+    const currentAddress = getAddressFromChildPubkey(currentChildPubkey, adType);
 
     addressBatch.push({
       ...currentAddress,
@@ -162,21 +173,21 @@ export const createDecoratedUTXOs = async (addresses: Address[], root: BIP32Inte
     const utxos = await getUtxosFromAddress(address);
 
     for (let utxo of utxos) {
-        deocratedUtxos.push({
-            ...utxo,
-            address: address,
-            bip32Derivation: [
-                {
-                    pubkey: address.pubkey!,
-                    path: `m/84'/0'/0'/${address.derivationPath}`,
-                    masterFingerprint: root.fingerprint,
-                },
-            ],
-        });
+      deocratedUtxos.push({
+        ...utxo,
+        address: address,
+        bip32Derivation: [
+          {
+            pubkey: address.pubkey!,
+            path: `m/84'/0'/0'/${address.derivationPath}`,
+            masterFingerprint: root.fingerprint,
+          },
+        ],
+      });
     }
-}
+  }
 
-return deocratedUtxos;
+  return deocratedUtxos;
 };
 
 export const signTransaction = async (
