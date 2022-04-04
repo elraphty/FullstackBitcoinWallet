@@ -103,7 +103,7 @@ export const getUtxos = async (req: Request, res: Response, next: NextFunction):
         // @ts-ignore
         const xpub = req.user.pub;
 
-        const addressType: string = req.body.adType;
+        const addressType: string | unknown = req.query.type;
 
         const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
 
@@ -126,7 +126,7 @@ export const getTransactions = async (req: Request, res: Response, next: NextFun
         // @ts-ignore
         const xpub = req.user.pub;
 
-        const addressType: string = req.body.adType;
+        const addressType: string | unknown = req.query.type;;
 
         const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
 

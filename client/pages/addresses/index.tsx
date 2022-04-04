@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useContext } from 'react';
+import React, { useEffect, useMemo, useState, useContext, useCallback } from 'react';
 import AddressRow from './components/AddressRow';
 import EmptyState from './components/EmptyState';
 import BodyWrap from '../../components/BodyWrap';
@@ -14,27 +14,32 @@ function Addresses() {
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [changeAddresses, setChangeAddresses] = useState<Address[]>([]);
     const [isLoading, setIsLoading] = useState<Boolean>(false);
+    const [addressType, setAddressType] = useState<string>('p2wpkh');
     const { getValue } = useContext(WalletContext);
 
+
+    const getAddresses = useCallback(async () => {
+        const token = await getFromStorage('token');
+
+        if (token) {
+            setIsLoading(true);
+
+            const addresses = await getWithToken(`wallet/getaddress?type=${addressType}`, token);
+
+            setAddresses(addresses.data.data.address);
+            setChangeAddresses(addresses.data.data.changeAddress);
+            setIsLoading(false);
+        }
+    }, [addressType]);
+
     useEffect(() => {
-
-        // console.log('Context Value ===', getValue().addresses)
-        const getAddresses = async () => {
-            const token = await getFromStorage('token');
-
-            if (token) {
-                setIsLoading(true);
-
-                const addresses = await getWithToken('wallet/getaddress?type=p2wpkh', token);
-
-                setAddresses(addresses.data.data.address);
-                setChangeAddresses(addresses.data.data.changeAddress);
-                setIsLoading(false);
-            }
-        };
-
         getAddresses();
-    }, [getValue])
+    }, [addressType, getAddresses, getValue]);
+
+    const switchAddressType = useCallback((_type: string) => {
+        setAddressType(_type);
+        getAddresses();
+    }, [getAddresses]);
 
     const classNames = (...classes: string[]) => {
         return classes.filter(Boolean).join(" ");
@@ -63,7 +68,17 @@ function Addresses() {
                     <div className="">
                         <div className="max-w-7xl mx-auto">
                             <h1 className="sm:text-xl xs:text-sm lg:text-2xl font-semibold text-gray-900">Addresses</h1>
-                            <div className="py-4">
+                            <section className="mt-3 mb-2">
+                                <button className={`inline justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md  ${addressType === 'p2wpkh' ? 'bg-purple-900 text-white' : 'text-gray-700'} focus:outline-none`}
+                                    onClick={() => switchAddressType('p2wpkh')
+                                    }>
+                                    P2WPKH
+                                </button>
+                                <button className={`inline justify-center lg:ml-5 sm:ml-0 py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md ${addressType === 'p2pkh' ? 'bg-purple-900 text-white' : 'text-gray-700'} focus:outline-none`} onClick={() => switchAddressType('p2pkh')}>
+                                    P2PKH
+                                </button>
+                            </section>
+                            <div className="py-3">
                                 <div className="max-w-7xl mx-auto bg-white shadow rounded-t-md">
                                     {/* Tabs */}
                                     <div className="sm:hidden">
