@@ -40,7 +40,7 @@ export default function Utxos() {
 
   useEffect(() => {
     getUtxos();
-  }, [addressType]);
+  }, [addressType, getUtxos]);
 
   const switchAddressType = useCallback((_type: string) => {
     setAddressType(_type);
