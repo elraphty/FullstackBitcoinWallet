@@ -74,7 +74,8 @@ export const createTransaction = async (
   utxos: DecoratedUtxo[],
   recipientAddress: string,
   amountInSatoshis: number,
-  changeAddress: Address
+  changeAddress: Address,
+  type: string | unknown
 ) => {
 
   // Implement dynamic fee rate 
@@ -98,18 +99,43 @@ export const createTransaction = async (
   psbt.setVersion(2); // These are defaults. This line is not needed.
   psbt.setLocktime(0); // These are defaults. This line is not needed.
 
+  // If it's a P2WPKH 
+  if (type === 'p2wpkh') {
+    for (let input of inputs) {
+      psbt.addInput({
+        hash: input.txid,
+        index: input.vout,
+        sequence: 0xfffffffd, // enables RBF
+        witnessUtxo: {
+          value: input.value,
+          script: input.address.output!,
+        },
+        bip32Derivation: input.bip32Derivation,
+      });
+    };
+
+    outputs.forEach((output: any) => {
+      // coinselect doesnt apply address to change output, so add it here
+      if (!output.address) {
+        output.address = changeAddress.address!;
+      }
+
+      psbt.addOutput({
+        address: output.address,
+        value: output.value,
+      });
+    });
+
+    return psbt;
+  }
+
   for (let input of inputs) {
     const txHex = await getTransactionHex(input.txid);
-    // console .log('Transaction Hex ===', txHex);
 
     psbt.addInput({
       hash: input.txid,
       index: input.vout,
       sequence: 0xfffffffd, // enables RBF
-      // witnessUtxo: {
-      //   value: input.value,
-      //   script: input.address.output!,
-      // },
       nonWitnessUtxo: Buffer.from(txHex, 'hex'),
       bip32Derivation: input.bip32Derivation,
     });

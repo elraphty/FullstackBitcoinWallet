@@ -126,7 +126,7 @@ export const getTransactions = async (req: Request, res: Response, next: NextFun
         // @ts-ignore
         const xpub = req.user.pub;
 
-        const addressType: string | unknown = req.query.type;;
+        const addressType: string | unknown = req.query.type;
 
         const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
 
@@ -164,7 +164,7 @@ export const createTransactions = async (req: Request, res: Response, next: Next
         const xpub = req.user.pub;
         const recipientAddress: string = req.body.recipientAddress;
         const amount: number = req.body.amount;
-        const addressType: string = req.body.adType;
+        const addressType: string | unknown = req.query.type;
 
         // Get Users encryoted private key from the database and decrypt it
         // @ts-ignore
@@ -183,7 +183,7 @@ export const createTransactions = async (req: Request, res: Response, next: Next
         const decoratedUtxos: DecoratedUtxo[] = await createDecoratedUTXOs(addresses, root);
 
         // Create the transaction
-        const transaction: Psbt = await createTransaction(decoratedUtxos, recipientAddress, amount, currentChangeAddressBatch[0]);
+        const transaction: Psbt = await createTransaction(decoratedUtxos, recipientAddress, amount, currentChangeAddressBatch[0], addressType);
 
         // Sign the transaction
         const signedTransactionHex: SignedTransactionData = await signTransaction(transaction, root);

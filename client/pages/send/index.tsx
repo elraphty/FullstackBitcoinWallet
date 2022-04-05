@@ -14,6 +14,8 @@ export default function Send() {
     const [transaction, setTransaction] = useState<Psbt | undefined>(undefined);
     const [error, setError] = useState<string>('');
     const [tHex, setTHex] = useState<string>('');
+    const [txId, setTxID] = useState<string>('');
+    const [status, setStatus] = useState<string>('');
     const [utxos, setUtxos] = useState<DecoratedUtxo[]>([]);
 
     useEffect(() => {
@@ -32,7 +34,8 @@ export default function Send() {
 
     const createTransactionWithFormValues = async (
         recipientAddress: string,
-        amountToSend: number
+        amountToSend: number,
+        type: string,
     ) => {
         const token = await getFromStorage('token');
         try {
@@ -41,11 +44,8 @@ export default function Send() {
                     recipientAddress,
                     amount: Number(amountToSend)
                 }
-                // console.log('Body ====', body);
 
-                const res = await postWithToken('wallet/createtransaction', body, token);
-
-                // console.log('Transaction Res ===', res);
+                const res = await postWithToken(`wallet/createtransaction?type=${type}`, body, token);
 
                 setTransaction(res.data.data.transaction.data);
                 setTHex(res.data.data.tHex.txHex);
@@ -53,7 +53,6 @@ export default function Send() {
 
             }
         } catch (e) {
-            // console.log('Transaction error ==', e);
             setError((e as Error).message);
         }
     };
@@ -65,8 +64,14 @@ export default function Send() {
             const body = {
                 txHex: tHex,
             }
-            const res = await postWithToken('wallet/broadcasttransaction', body, token);
-            txHex = res.data.data;
+            postWithToken('wallet/broadcasttransaction', body, token)
+                .then(res => {
+                    setStatus('success');
+                    setTxID(res.data.data);
+                })
+                .catch(e => {
+                    setStatus('error');
+                });
 
         }
         return txHex;
@@ -90,6 +95,9 @@ export default function Send() {
                                     utxos={utxos}
                                     broadcastTx={broadcastTx}
                                     tHex={tHex}
+                                    status={status}
+                                    txId={txId}
+                                    setStep={setStep}
                                 />
                             )}
                         </div>
