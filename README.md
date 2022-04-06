@@ -20,7 +20,8 @@ NOTE: You need postgres installed to run this application successfully
   ### BACKEND
 
   ```cd backend```
-  ```` npm install  ```
+
+  ``` npm install  ```
 
    - Create a .env file touch .env
    - Copy the placeholders from the .env.sample file into your .env 
@@ -34,7 +35,9 @@ NOTE: You need postgres installed to run this application successfully
   ### CLIENT
 
   ```cd client ```
+
   ``` yarn install ```
+  
   ``` npm run dev  ```
 
   
