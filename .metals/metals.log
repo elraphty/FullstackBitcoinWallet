@@ -44,3 +44,4 @@
 2022.04.03 17:29:51 INFO  time: initialize in 5.76s
 2022.04.03 17:29:54 WARN  Build server is not auto-connectable.
 2022.04.03 17:29:54 WARN  no build tool detected in workspace '/Users/apple/Desktop/Biitcoin/bitcoinwallet'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2022.04.06 00:57:15 INFO  shutting down Metals
