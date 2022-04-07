@@ -48,3 +48,20 @@ export const broadcastTx = [
     .escape()
     .withMessage('Requires transaction Hex')
 ]
+
+export const multiAddress = [
+  body('publicKeys.*')
+    .not().isEmpty()
+    .isString()
+    .ltrim()
+    .rtrim()
+    .escape()
+    .withMessage('Wrong publicKey data'),
+  body('signers')
+    .not().isEmpty()
+    .isNumeric()
+    .ltrim()
+    .rtrim()
+    .escape()
+    .withMessage('Signer count must be a number'),
+]

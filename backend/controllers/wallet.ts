@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { generateMnemonic, mnemonicToSeed } from 'bip39';
 import BIP32Factory, { BIP32Interface } from 'bip32';
 import * as ecc from 'tiny-secp256k1';
-import { networks, Psbt } from 'bitcoinjs-lib';
+import { payments, networks, Psbt } from 'bitcoinjs-lib';
 import { responseSuccess, responseErrorValidation } from "../helpers";
 import { broadcastTx, getTransactionsFromAddress } from "../helpers/blockstream-api";
 import { Address, BlockstreamAPITransactionResponse, DecoratedUtxo, SignedTransactionData } from "../interfaces/blockstream";
@@ -87,6 +87,29 @@ export const generateAddress = async (req: Request, res: Response, next: NextFun
         };
 
         return responseSuccess(res, 200, 'Successfully generated address', data);
+    } catch (err) {
+        next(err);
+    }
+};
+
+// Controller for generating master private key
+export const generateMultiAddress = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return responseErrorValidation(res, 400, errors.array());
+        }
+       
+        const xpubs: Buffer[] = req.body.publicKeys;
+        const signersCount: number = req.body.signers
+
+        const { address } = payments.p2sh({
+            redeem: payments.p2ms({ m: signersCount, pubkeys: xpubs }),
+        });
+
+        return responseSuccess(res, 200, 'Successfully generated P2SH address', address);
     } catch (err) {
         next(err);
     }

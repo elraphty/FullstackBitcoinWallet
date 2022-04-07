@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
-import { generateMnenomic, generateMasterKeys, generateAddress, getUtxos, getTransactions, createTransactions, broadcastTransaction, getPrivateKey, getPublicKey } from '../../../controllers/wallet';
-import { generateKeys, broadcastTx } from '../../../utils/validator/wallet';
+import { generateMnenomic, generateMasterKeys, generateAddress, getUtxos, getTransactions, createTransactions, broadcastTransaction, getPrivateKey, getPublicKey, generateMultiAddress } from '../../../controllers/wallet';
+import { generateKeys, broadcastTx, multiAddress } from '../../../utils/validator/wallet';
 import { authUser } from '../../../helpers/auth';
 
 const router: Router = express.Router();
@@ -10,6 +10,8 @@ router.get('/mnenomic', generateMnenomic);
 router.post('/privatekey', generateKeys, generateMasterKeys);
 
 router.get('/getaddress', authUser, generateAddress);
+
+router.post('/getp2shaddress', multiAddress, authUser, generateMultiAddress);
 
 router.get('/utxos', authUser, getUtxos);
 
