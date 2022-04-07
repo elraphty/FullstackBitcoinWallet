@@ -21,8 +21,8 @@ export default function Transactions() {
 
       const transRes = await getWithToken(`wallet/transactions?type=${addressType}`, token);
 
-      setIsLoading(false);
       setTransactions(transRes.data.data);
+      setIsLoading(false);
     }
   }, [addressType]);
 

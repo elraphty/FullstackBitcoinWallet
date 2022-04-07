@@ -127,7 +127,7 @@ export const getTransactions = async (req: Request, res: Response, next: NextFun
         const xpub = req.user.pub;
 
         const addressType: string | unknown = req.query.type;
-
+       
         const node = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
 
         const currentAddressBatch: Address[] = createAddressBatch(xpub, node, addressType);

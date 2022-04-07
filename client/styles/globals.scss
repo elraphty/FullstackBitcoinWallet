@@ -234,8 +234,34 @@ label.form__label {
   }
 
   .greeting {
-    font-size: $textSizeSm;
+    font-size: $textSizeMd;
     font-family: $font;
+    color: $primaryButton;
+  }
+
+  ul.description {
+    margin-left: 25px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    li.base_li {
+      list-style: disc;
+      color: $textDarkColor;
+      font-size: 1.05rem;
+      font-weight: 900;
+      margin-bottom: 15px;
+
+      ol {
+        li {
+          list-style: decimal;
+          font-size: 0.88rem;
+          margin-left: 20px;
+          margin-top: 5px;
+          margin-bottom: 5px;
+          color: #808080;
+          font-weight: 500;
+        }
+      }
+    }
   }
 }
 
