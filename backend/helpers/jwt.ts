@@ -12,10 +12,12 @@ dotenv.config();
 const TOKEN_SECRET: any = process.env.TOKEN_SECRET;
 
 export const signUser = (data: User) => {
-    const token = jwt.sign(data, TOKEN_SECRET, {
-        expiresIn: 1000 * 60 * 60 * 24 * 31,
+    const token = jwt.sign({
+        data, 
+        exp: Date.now() + (1000 * 60 * 60 * 24),
         jwtid: v4()
-    });
+    }, TOKEN_SECRET);
+
     return token;
 };
 
@@ -23,7 +25,7 @@ export const verifyUser = (data: string, callback: Function) => {
     jwt.verify(data, TOKEN_SECRET, (err: VerifyErrors | null, res: any) => {
         if (err) return callback(err, false)
         else if (
-            res?.exp > Date.now()
+            res?.exp < Date.now()
         ) {
             const err = {
                 status: 403,
@@ -32,7 +34,6 @@ export const verifyUser = (data: string, callback: Function) => {
 
             return callback(err, false);
         }
-        // eslint-disable-next-line standard/no-callback-literal
-        return callback(false, res)
+        return callback(false, res);
     });
 };

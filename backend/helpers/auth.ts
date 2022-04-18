@@ -2,10 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import { verifyUser } from './jwt';
 import { responseError } from '.';
 import { User } from '../interfaces/knex';
-
-// export interface AuthRequest extends Request {
-//   user: User;
-// }
+interface TokenData {
+  data: User
+};
 
 export const authUser = (req: Request, res: Response, next: NextFunction) => {
   // check if there is an authorization header
@@ -14,7 +13,7 @@ export const authUser = (req: Request, res: Response, next: NextFunction) => {
 
     const token = req.headers.authorization.substring(7);
   
-    verifyUser(token, (err: string, ans: User) => {
+    verifyUser(token, (err: string, ans: TokenData) => {
       if (err) {
         return responseError(res, 503, 'Not an authorized user');
       }
@@ -23,7 +22,7 @@ export const authUser = (req: Request, res: Response, next: NextFunction) => {
       // set user to session
       // console.log('Ans ===', ans);
       // @ts-ignore
-      req.user = ans;
+      req.user = ans.data;
     });
   }
 

@@ -105,7 +105,7 @@ export const generateMultiAddress = async (req: Request, res: Response, next: Ne
         const xpubs: Buffer[] = req.body.publicKeys;
         const signersCount: number = req.body.signers
 
-        const { address } = payments.p2sh({
+        const { address, redeem } = payments.p2sh({
             redeem: payments.p2ms({ m: signersCount, pubkeys: xpubs }),
         });
 
