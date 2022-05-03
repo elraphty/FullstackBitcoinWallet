@@ -12,6 +12,7 @@ import { validationResult } from 'express-validator';
 import knex from '../db/knex';
 import { User } from "../interfaces/knex";
 import { encryptKey, decryptKey } from "../helpers/encryptKey";
+import { RequestUser } from '../interfaces';
 
 const bip32 = BIP32Factory(ecc);
 
@@ -71,8 +72,9 @@ export const generateAddress = async (req: Request, res: Response, next: NextFun
             return responseErrorValidation(res, 400, errors.array());
         }
     
-        // @ts-ignore
-        const xpub = req.user.pub;
+        const reqUser = req as RequestUser;
+        const xpub = reqUser.user.pub || '';
+
         const addressType: string | unknown = req.query.type;
 
         const node: BIP32Interface = bip32.fromBase58(xpub, networks.testnet).derivePath("0/0");
@@ -123,8 +125,8 @@ export const getUtxos = async (req: Request, res: Response, next: NextFunction):
             return responseErrorValidation(res, 400, errors.array());
         }
         
-        // @ts-ignore
-        const xpub = req.user.pub;
+        const reqUser = req as RequestUser;
+        const xpub = reqUser.user.pub || '';
 
         const addressType: string | unknown = req.query.type;
 
@@ -146,8 +148,8 @@ export const getUtxos = async (req: Request, res: Response, next: NextFunction):
 
 export const getTransactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        // @ts-ignore
-        const xpub = req.user.pub;
+        const reqUser = req as RequestUser;
+        const xpub = reqUser.user.pub || '';
 
         const addressType: string | unknown = req.query.type;
        
@@ -183,8 +185,8 @@ export const getTransactions = async (req: Request, res: Response, next: NextFun
 
 export const createTransactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        // @ts-ignore
-        const xpub = req.user.pub;
+        const reqUser = req as RequestUser;
+        const xpub = reqUser.user.pub || '';
         const recipientAddress: string = req.body.recipientAddress;
         const amount: number = req.body.amount;
         const addressType: string | unknown = req.query.type;

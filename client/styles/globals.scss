@@ -266,7 +266,7 @@ label.form__label {
 }
 
 .formErrors {
-  color: $textLightError;
+  color: red;
   font-size: $textSizeXs;
   margin-bottom: 15px;
   margin-top: -10px;
@@ -380,4 +380,10 @@ label.form__label {
       transform: rotate(360deg);
     }
   }
+}
+
+.p2sh-wrap {
+  border: 0.5px solid #c3c3c3;
+  padding: 20px 40px;
+  margin-top: 30px;
 }

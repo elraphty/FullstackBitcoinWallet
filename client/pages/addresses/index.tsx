@@ -6,6 +6,7 @@ import { getFromStorage } from '../../helpers/localstorage';
 import { getWithToken } from '../../helpers/axios';
 import Loader from '../../components/Loader';
 import WalletContext from '../../components/WalletContext';
+import P2SH from './components/MultisigTrans';
 
 import { Address } from '../types';
 
@@ -40,8 +41,6 @@ function Addresses() {
         setAddressType(_type);
         if (_type !== 'p2sh') {
             getAddresses();
-        } else {
-            alert('else');
         }
     }, [getAddresses]);
 
@@ -167,7 +166,7 @@ function Addresses() {
                                             )
                                         ) : null}
                                     </div>)
-                                    : null
+                                    : <P2SH />
                             }
 
                         </div>
