@@ -1,14 +1,18 @@
 import { useCallback, useState, useMemo } from "react";
 import { Formik, Form, FieldArray, Field, getIn } from 'formik';
 import * as Yup from "yup";
+import { postWithToken } from '../../../helpers/axios';
+import { getFromStorage } from '../../../helpers/localstorage';
 
 export type FormValues = {
     keys: [{
         pubKey: string;
-    }]
+    }],
+    signers: number,
 };
 
 const validationSchema = Yup.object().shape({
+    signers: Yup.number().required('This field is required').min(2, 'Requires atleast 2 public keys'),
     keys: Yup.array()
         .of(
             Yup.object().shape({
@@ -21,21 +25,45 @@ const validationSchema = Yup.object().shape({
 
 const P2SH = () => {
     const [btnText, setBtnText] = useState<string>('Create address');
+    const [error, setError] = useState<string>('');
+    const [address, setAddress] = useState<string>('');
 
     const initialValues = useMemo(
         (): FormValues => ({
             keys: [{
                 pubKey: '',
-            }]
+            }],
+            signers: 2,
         }),
         [],
     );
 
     const formSubmit = useCallback(async (values: FormValues, { setSubmitting }) => {
+        const token = await getFromStorage('token');
         setBtnText('Creating... address');
-        // await createTransaction(values.recipientAddress, values.amountToSend, addressType);
-        setSubmitting(false);
-        setBtnText('Create address');
+        try {
+            if (token) {
+                let keys: string[] = [];
+                values.keys.forEach(key => {
+                    keys.push(key.pubKey);
+                });
+                const body = {
+                    publicKeys: keys,
+                    signers: Number(values.signers)
+                }
+
+                const res = await postWithToken(`wallet/getp2shaddress`, body, token);
+                console.log('Res ====', res.data.data);
+                setAddress(res.data.data);
+                setSubmitting(false);
+                setBtnText('Create address');
+
+            }
+        } catch (e) {
+            setError((e as Error).message);
+            setSubmitting(false);
+            setBtnText('Create address');
+        }
     }, []);
 
     const FormTextArea = (props: any) => (
@@ -51,7 +79,7 @@ const P2SH = () => {
     const ErrorMessage = ({ name }) => (
         <Field
             name={name}
-              // @ts-ignore
+            // @ts-ignore
             render={({ form }) => {
                 const error = getIn(form.errors, name);
                 const touch = getIn(form.touched, name);
@@ -69,7 +97,6 @@ const P2SH = () => {
                         <Form>
                             <div className="shadow sm:rounded-md sm:overflow-hidden">
                                 <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
-
                                     <FieldArray name="keys">
                                         {({ insert, remove, push }) => (
                                             <>
@@ -96,7 +123,26 @@ const P2SH = () => {
                                                         </>
 
                                                     ))}
-
+                                                    <div className="col-span-3 sm:col-span-2">
+                                                        <label
+                                                            htmlFor="price"
+                                                            className="block text-sm font-medium text-gray-700"
+                                                        >
+                                                            Number of signers ...
+                                                        </label>
+                                                        <div className="mt-1 rounded-md shadow-sm">
+                                                            <input
+                                                                type="number"
+                                                                name="signers"
+                                                                className="block w-full pr-12 sm:text-sm rounded-md px-3 border-solid border-2 border-[#C8C8C9]"
+                                                                placeholder="2"
+                                                                aria-describedby="price-currency"
+                                                                value={values.signers}
+                                                                onChange={handleChange}
+                                                            />
+                                                        </div>
+                                                        {errors.signers ? <p className="formErrors">{errors.signers}</p> : null}
+                                                    </div>
                                                 </div>
                                                 <button className="inline-flex justify-center py-2 px-2 border border-transparent shadow-sm text-xs font-medium rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2" onClick={() => push({ pubKey: '' })}>Add key</button>
                                             </>

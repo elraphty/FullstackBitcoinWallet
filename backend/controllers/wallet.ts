@@ -104,12 +104,18 @@ export const generateMultiAddress = async (req: Request, res: Response, next: Ne
             return responseErrorValidation(res, 400, errors.array());
         }
        
-        const xpubs: Buffer[] = req.body.publicKeys;
-        const signersCount: number = req.body.signers
+        const xpubs: string[] = req.body.publicKeys;
+        const signersCount: number = Number(req.body.signers)
+
+        let pubkeys: Buffer[] = xpubs.map(pub => {
+            return bip32.fromBase58(pub, networks.testnet).derivePath("0/0").publicKey;
+        })
 
         const { address, redeem } = payments.p2sh({
-            redeem: payments.p2ms({ m: signersCount, pubkeys: xpubs }),
+            redeem: payments.p2ms({ m: signersCount, pubkeys }),
         });
+
+        console.log('Redeem ===', redeem)
 
         return responseSuccess(res, 200, 'Successfully generated P2SH address', address);
     } catch (err) {
