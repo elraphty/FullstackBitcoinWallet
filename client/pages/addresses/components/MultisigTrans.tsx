@@ -3,6 +3,7 @@ import { Formik, Form, FieldArray, Field, getIn } from 'formik';
 import * as Yup from "yup";
 import { postWithToken } from '../../../helpers/axios';
 import { getFromStorage } from '../../../helpers/localstorage';
+import P2shSuccessAlert from "./MultiSuccess";
 
 export type FormValues = {
     keys: [{
@@ -53,11 +54,16 @@ const P2SH = () => {
                 }
 
                 const res = await postWithToken(`wallet/getp2shaddress`, body, token);
-                console.log('Res ====', res.data.data);
+                // console.log('Res ====', res.data.data);
                 setAddress(res.data.data);
                 setSubmitting(false);
                 setBtnText('Create address');
 
+                // Reset Values
+                values.keys = [{
+                    pubKey: '',
+                }];
+                values.signers = 2;
             }
         } catch (e) {
             setError((e as Error).message);
@@ -92,6 +98,7 @@ const P2SH = () => {
     return (
         <div className="py-4 flex align-center justify-center">
             <div className="w-full" style={{ maxWidth: 800 }}>
+                {address ?  (<P2shSuccessAlert address={address} />) : null}
                 <div className="mt-5 md:mt-0 md:col-span-2 w-full">
                     <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={formSubmit}>{({ values, errors, touched, handleChange, isSubmitting }) => (
                         <Form>

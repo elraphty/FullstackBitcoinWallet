@@ -115,7 +115,7 @@ export const generateMultiAddress = async (req: Request, res: Response, next: Ne
             redeem: payments.p2ms({ m: signersCount, pubkeys }),
         });
 
-        console.log('Redeem ===', redeem)
+        // console.log('Redeem ===', redeem)
 
         return responseSuccess(res, 200, 'Successfully generated P2SH address', address);
     } catch (err) {
