@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, useEffect } from "react";
 import { Formik, Form, FieldArray, Field, getIn } from 'formik';
 import * as Yup from "yup";
 import { postWithToken } from '../../../helpers/axios';
@@ -53,8 +53,8 @@ const P2SH = () => {
                     signers: Number(values.signers)
                 }
 
-                const res = await postWithToken(`wallet/getp2shaddress`, body, token);
-                // console.log('Res ====', res.data.data);
+                const res = await postWithToken(`wallet/createp2shaddress`, body, token);
+
                 setAddress(res.data.data);
                 setSubmitting(false);
                 setBtnText('Create address');
@@ -63,6 +63,7 @@ const P2SH = () => {
                 values.keys = [{
                     pubKey: '',
                 }];
+
                 values.signers = 2;
             }
         } catch (e) {

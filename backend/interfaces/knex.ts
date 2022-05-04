@@ -8,9 +8,9 @@ export interface User {
 
 export interface P2SH {
     id?: number;
-    userid: number;
+    userid?: number;
     address: string;
-    redeem: string;
+    redeem?: string;
 }
 
 export interface UserLogin extends User {

@@ -1,4 +1,4 @@
-import { payments } from 'bitcoinjs-lib';
+import { Payment } from 'bitcoinjs-lib';
 import {
     BlockstreamAPITransactionResponse,
     BlockstreamAPIUtxoResponse,
@@ -6,12 +6,16 @@ import {
     Vout,
   } from './blockstream';
 
-export interface Address extends payments.Payment {
+export interface Address extends Payment {
     derivationPath: string;
     masterFingerprint: Buffer;
     type?: "used" | "unused";
 }
 
+export interface P2SHAdress {
+    address: string;
+    redeem?: Payment
+}
 export interface DecoratedVin extends Vin {
     isMine: boolean;
     isChange: boolean;

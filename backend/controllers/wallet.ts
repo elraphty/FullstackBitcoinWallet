@@ -128,6 +128,29 @@ export const generateMultiAddress = async (req: Request, res: Response, next: Ne
     }
 };
 
+export const getMultiAddress = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return responseErrorValidation(res, 400, errors.array());
+        }
+
+        const reqUser = req as RequestUser;
+        
+        const userid: number = Number(reqUser.user.id);
+
+        // Set user p2sh addresses
+        const addresses: P2SH[] = await knex<P2SH>('p2sh').select('address').where({ userid });
+
+        responseSuccess(res, 200, 'Successfully broadcasted transaction', addresses);
+
+    } catch (err) {
+        next(err);
+    }
+};
+
 export const getUtxos = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         // Finds the validation errors in this request and wraps them in an object with handy functions
@@ -263,9 +286,10 @@ export const getPublicKey = async (req: Request, res: Response, next: NextFuncti
         if (!errors.isEmpty()) {
             return responseErrorValidation(res, 400, errors.array());
         }
+
+        const reqUser = req as RequestUser;
         
-        // @ts-ignore
-        const email: string = req.user.email;
+        const email: string = reqUser.user.email;
 
         // Set user private key
         const user = await knex<User>('users').where({ email }).first();
@@ -279,7 +303,6 @@ export const getPublicKey = async (req: Request, res: Response, next: NextFuncti
     }
 };
 
-
 export const getPrivateKey = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         // Finds the validation errors in this request and wraps them in an object with handy functions
@@ -289,8 +312,9 @@ export const getPrivateKey = async (req: Request, res: Response, next: NextFunct
             return responseErrorValidation(res, 400, errors.array());
         }
         
-        // @ts-ignore
-        const email: string = req.user.email;
+        const reqUser = req as RequestUser;
+        
+        const email: string = reqUser.user.email;
 
         // Get user data
         const user = await knex<User>('users').where({ email }).first();
