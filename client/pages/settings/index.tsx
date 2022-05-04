@@ -64,6 +64,20 @@ export default function Settings() {
                         </button>
                     </div>
                     <div className="shadow sm:rounded-md sm:overflow-hidden  p-5 mb-10">
+                        <h3 className="text-lg font-black">P2SH</h3>
+                        <textarea value={JSON.stringify(p2sh)} disabled className="w-full p-5 mt-3 text-sm bg-gray-100 xs:text-xs" />
+                        <button
+                            onClick={() =>
+                                navigator.clipboard.writeText(
+                                    JSON.stringify(p2sh)
+                                )
+                            }
+                            className="mt-4 justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-gray-700 focus:outline-none"
+                        >
+                            Copy data
+                        </button>
+                    </div>
+                    <div className="shadow sm:rounded-md sm:overflow-hidden  p-5 mb-10">
                         <h3 className="text-lg font-black">Private Key</h3>
                         <p className="text-red-500 text-sm font-bold my-3">Keep your private key extremely safe, anyone who has access to your private key will also have access to all you BITCOINS</p>
                         <textarea value={privKey} disabled className="w-full p-5 mt-3 text-sm bg-gray-100 xs:text-xs" />
