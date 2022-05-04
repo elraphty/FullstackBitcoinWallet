@@ -118,7 +118,7 @@ export const generateMultiAddress = async (req: Request, res: Response, next: Ne
             redeem: payments.p2ms({ m: signersCount, pubkeys }),
         });
 
-        const enRedeem: string = encryptKey(String(redeem));
+        const enRedeem: string = encryptKey(JSON.stringify(redeem));
 
         await knex<P2SH>('p2sh').insert({ userid: reqUser.user.id, address, redeem: enRedeem });
 
@@ -143,6 +143,37 @@ export const getMultiAddress = async (req: Request, res: Response, next: NextFun
 
         // Set user p2sh addresses
         const addresses: P2SH[] = await knex<P2SH>('p2sh').select('address').where({ userid });
+
+        responseSuccess(res, 200, 'Successfully broadcasted transaction', addresses);
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+
+export const exportMultiAddress = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return responseErrorValidation(res, 400, errors.array());
+        }
+
+        const reqUser = req as RequestUser;
+        
+        const userid: number = Number(reqUser.user.id);
+
+        // Set user p2sh addresses
+        const addr: P2SH[] = await knex<P2SH>('p2sh').where({ userid });
+
+        const addresses = addr.map(ad => {
+            return  {
+                address: ad.address,
+                redeeem: JSON.parse(decryptKey(ad.redeem || ''))
+            }
+        });
 
         responseSuccess(res, 200, 'Successfully broadcasted transaction', addresses);
 

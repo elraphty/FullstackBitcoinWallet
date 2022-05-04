@@ -8,6 +8,7 @@ const defaulPrivKey = '*********************************************************
 export default function Settings() {
     const [privKey, setPrivKey] = useState(defaulPrivKey);
     const [pubKey, setPubKey] = useState('xpubFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF');
+    const [p2sh, setP2sh] = useState([]);
 
     useEffect(() => {
         const getPublicKey = async () => {
@@ -19,7 +20,17 @@ export default function Settings() {
             }
         };
 
+        const getP2sh = async () => {
+            const token = await getFromStorage('token');
+
+            if (token) {
+                const p2sh = await getWithToken('wallet/p2sh', token);
+                setP2sh(p2sh.data.data);
+            }
+        };
+
         getPublicKey();
+        getP2sh();
     }, []);
 
     const getPrivKey = useCallback(async () => {

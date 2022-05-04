@@ -80,7 +80,7 @@ const Signup: NextPage = () => {
 
     axios.post(`${BASE_URL}wallet/privatekey`, body)
       .then(res => {
-        router.push('/');
+        router.push('/login');
         setModalState('hidden');
       })
       .catch(e => {
