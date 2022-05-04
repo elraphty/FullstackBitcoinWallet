@@ -1,6 +1,14 @@
 # FULLSTACK JAVASCRIPT BITCOIN WALLET 
 
-### A full-stack Bitcoin wallet built with bitcoinjs, and blockstream APIs
+### A full-stack Non-custodial Bitcoin wallet built with bitcoinjs, and blockstream APIs
+
+## Prerequisites
+ - Bitcoin knowledge
+ - Nodejs installed
+ - Typescript knowledge
+ - Reactjs/Nextjs knowledge 
+
+## Project structure
 
 - Client - Reactjs/Nextjs
 - Backend - Nodejs/Expressjs
