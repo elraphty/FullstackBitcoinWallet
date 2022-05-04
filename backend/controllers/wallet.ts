@@ -10,7 +10,7 @@ import { createTransaction, signTransaction, createAddressBatch, changeAddressBa
 import { serializeTxs } from "../helpers/transactions";
 import { validationResult } from 'express-validator';
 import knex from '../db/knex';
-import { User } from "../interfaces/knex";
+import { P2SH, User } from "../interfaces/knex";
 import { encryptKey, decryptKey } from "../helpers/encryptKey";
 import { RequestUser } from '../interfaces';
 
@@ -103,10 +103,13 @@ export const generateMultiAddress = async (req: Request, res: Response, next: Ne
         if (!errors.isEmpty()) {
             return responseErrorValidation(res, 400, errors.array());
         }
+
+        const reqUser = req as RequestUser;
        
         const xpubs: string[] = req.body.publicKeys;
         const signersCount: number = Number(req.body.signers)
 
+        // Get the pubkey buffers
         let pubkeys: Buffer[] = xpubs.map(pub => {
             return bip32.fromBase58(pub, networks.testnet).derivePath("0/0").publicKey;
         })
@@ -115,7 +118,9 @@ export const generateMultiAddress = async (req: Request, res: Response, next: Ne
             redeem: payments.p2ms({ m: signersCount, pubkeys }),
         });
 
-        // console.log('Redeem ===', redeem)
+        const enRedeem: string = encryptKey(String(redeem));
+
+        await knex<P2SH>('p2sh').insert({ userid: reqUser.user.id, address, redeem: enRedeem });
 
         return responseSuccess(res, 200, 'Successfully generated P2SH address', address);
     } catch (err) {
