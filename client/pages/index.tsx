@@ -15,7 +15,7 @@ const Dashboard: NextPage = () => {
               <ul className="description">
                 <li className="base_li">Addresses
                   <ol>
-                    <li>Generate P2WPKH, and P2PKH addresses, with their change addresses</li>
+                    <li>Generate P2WPKH, and P2PKH addresses, with their change addresses, P2SH can also be generated</li>
                   </ol>
                 </li>
                 <li className="base_li">UTXOS
@@ -37,6 +37,7 @@ const Dashboard: NextPage = () => {
                 <li className="base_li">Settings
                   <ol>
                     <li>Copy master public key</li>
+                    <li>Export P2SH addreses and Redeem scripts</li>
                     <li>Copy and hide master private key</li>
                   </ol>
                 </li>

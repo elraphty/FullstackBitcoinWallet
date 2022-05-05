@@ -35,6 +35,7 @@ export const getAddressFromChildPubkey = (
     pubkey: child.publicKey,
     network: networks.testnet,
   });
+  
   return address;
 };
 

@@ -18,12 +18,12 @@ const bip32 = BIP32Factory(ecc);
 
 const derivationPath = "m/84'/0'/0'";
 
-// Controller for generating mnenomic seed
+// Controller for generating mnemonic seed
 export const generateMnenomic = (req: Request, res: Response, next: NextFunction): void => {
     try {
         const mnemonic = generateMnemonic(256);
 
-        responseSuccess(res, 200, 'Successfully generated mnenomic', mnemonic);
+        responseSuccess(res, 200, 'Successfully generated mnemonic', mnemonic);
     } catch (err) {
         next(err);
     }
@@ -62,7 +62,7 @@ export const generateMasterKeys = async (req: Request, res: Response, next: Next
     }
 };
 
-// Controller for generating master private key
+// Controller for generating addresses
 export const generateAddress = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         // Finds the validation errors in this request and wraps them in an object with handy functions
