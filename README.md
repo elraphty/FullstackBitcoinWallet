@@ -31,7 +31,7 @@ NOTE: You need postgres installed to run this application successfully
 
   ``` npm install  ```
 
-   - Create a .env file touch .env
+   - Create a .env file ```touch .env```
    - Copy the placeholders from the .env.sample file into your .env 
    - Create a local postgres database
    - Update the .env variable values with yours
